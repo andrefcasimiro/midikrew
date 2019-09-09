@@ -1,0 +1,6 @@
+
+1. BUILD THE DOCKER IMAGE:
+
+  docker build . -t midikrew
+
+2.

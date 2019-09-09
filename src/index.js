@@ -1,12 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+// @flow
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from 'containers/App'
+import FontFaceObserver from 'fontfaceobserver'
+import 'assets/fonts/index.css'
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const fontObserver = new FontFaceObserver('defaultFont', {})
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+fontObserver.load()
+  .then(() => {
+    const body = document.body
+    body && body.classList.add('fontLoaded')
+  })
+  .catch((event: { message: string }) => console.log(event.message))
+
+const element = document.getElementById('root')
+
+if (element) {
+  ReactDOM.render(<App />, element)
+}
