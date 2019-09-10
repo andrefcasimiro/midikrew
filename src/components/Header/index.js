@@ -12,7 +12,7 @@ const Header = () => {
         <BoldLink href={'/'}>{(appConfiguration.applicationName).toUpperCase()}</BoldLink>
         {appConfiguration.navLinks.user.map((navLink: Navlink, index) =>
           (!!navLink.to || !!navLink.onClick)
-          ? <Link key={index} href={navLink.to || '#s'} onClick={navLink.onClick || null}>
+          ? <Link key={index} href={navLink.to || '#'} onClick={navLink.onClick || null}>
               {navLink.name}
             </Link>
           : <StatefulLink key={index} component={navLink.component}>
