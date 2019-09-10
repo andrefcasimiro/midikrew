@@ -1,6 +1,7 @@
 // @flow
 import styled, { keyframes } from 'styled-components'
 import theme from 'global/theme'
+import { mq } from 'common/mediaQueries'
 
 const modalFadeDuration = 250
 
@@ -37,10 +38,8 @@ export const ModalContainer = styled.div`
   flex-direction: column;
   top: 2rem;
 
-  background: ${theme.colors.themes.common.primary};
-  border: .1rem solid rgba(255, 255, 255, 0.2);
-  box-shadow: 2px 2px 15px 10px rgba(0, 0, 0, 0.2);
-  opacity: 0.95;
+  background: ${theme.colors.monicastro.white};
+  border: none;
   padding-bottom: 2rem;
   margin-bottom: 3rem;
   overflow: auto;
@@ -49,15 +48,25 @@ export const ModalContainer = styled.div`
   min-height: calc(100% - 300px);
   max-width: 550px;
   max-height: calc(100% - 80px);
+
+  ${mq("max").tablet} {
+    overflow: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    min-height: auto;
+    max-height: 100%;
+    min-width: auto;
+    max-width: auto;
+  }
 `
 
 export const ModalHeader = styled.div`
   display: flex;
   flex-direction: row;
-
-  background: ${theme.colors.themes.common.primary};
+  background: ${theme.colors.monicastro.grey};
   border: .1rem solid rgba(255, 255, 255, 0.2);
-  box-shadow: 2px 2px 15px 10px rgba(0, 0, 0, 0.1);
 
   justify-content: space-between;
   align-items: center;

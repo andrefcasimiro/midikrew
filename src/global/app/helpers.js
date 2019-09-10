@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import styled from 'styled-components'
+import StatefulModal from 'components/StatefulModal'
 import theme from 'global/theme'
 
 const Li = styled.li`
@@ -14,7 +15,12 @@ const Li = styled.li`
 const Menu = ({ options }) => {
   return (
     <ul>
-      {options.map((option, index) => <Li key={index} onClick={option.onClick}>{option.name}</Li>)}
+      {options.map((option, index) => option.onClick
+        ? <Li key={index} onClick={option.onClick}>{option.name}</Li>
+        : <Li key={index}>
+            <StatefulModal title={option.name} component={option.component}>{option.name}</StatefulModal>
+          </Li>
+      )}
     </ul>
   )
 }
@@ -78,11 +84,11 @@ const memberLinks = {
   component: () => <Menu options={[
       {
         name: 'Login',
-        onClick: () => console.log('...'),
+        component: () => <h2>Hello</h2>,
       },
       {
         name: 'Join',
-        onClick: () => console.log('log out'),
+        onClick: () => console.log('join in'),
       },
     ]} />,
 }
