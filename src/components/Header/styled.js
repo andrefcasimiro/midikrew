@@ -5,7 +5,7 @@ import { BoxSection } from 'componentsStyled/Shared'
 
 export const Container = styled(BoxSection)`
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-evenly;
   position: fixed;
   width: 100%;
   margin: 0;

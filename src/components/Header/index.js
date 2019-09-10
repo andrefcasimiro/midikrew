@@ -1,21 +1,23 @@
 // @flow
 import React from 'react'
-import { IoIosArrowDown as ArrowDownIcon } from 'react-icons/io'
 import appConfiguration, { type Navlink } from 'global/app'
-import { Title, Link } from 'componentsStyled/Typography'
+import StatefulLink from 'components/StatefulLink'
+import { Link, BoldLink } from 'componentsStyled/Typography'
 import { Container, Spacer } from './styled'
 
 const Header = () => {
-
   return (
     <React.Fragment>
       <Container>
-        <Title>{appConfiguration.applicationName}</Title>
+        <BoldLink href={'/'}>{(appConfiguration.applicationName).toUpperCase()}</BoldLink>
         {appConfiguration.navLinks.user.map((navLink: Navlink, index) =>
-          <Link key={index} to={navLink.to || '#s'} onClick={navLink.onClick || null}>
-            {navLink.name}
-            {navLink.onClick && <ArrowDownIcon />}
-          </Link>
+          (!!navLink.to || !!navLink.onClick)
+          ? <Link key={index} href={navLink.to || '#s'} onClick={navLink.onClick || null}>
+              {navLink.name}
+            </Link>
+          : <StatefulLink key={index} component={navLink.component}>
+              <Link>{navLink.name}</Link>
+            </StatefulLink>
         )}
       </Container>
       <Spacer />

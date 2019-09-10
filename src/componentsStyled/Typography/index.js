@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import theme from 'global/theme'
 
 export const Title = styled.h2`
   display: flex;
@@ -40,4 +41,9 @@ export const Link = styled.a`
   padding: 0;
   text-decoration: none;
   align-items: center;
+  color: ${theme.colors.monicastro.dark};
+`
+
+export const BoldLink = styled(Link)`
+  font-weight: bold;
 `
