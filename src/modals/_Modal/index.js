@@ -4,6 +4,7 @@ import {
   ModalWrapper,
   ModalContainer,
   ModalHeader,
+  ModalContentWrapper,
   ModalContent,
   ModalTitle,
   ModalClose,
@@ -63,9 +64,11 @@ class Modal extends Component <Props, State> {
                 x
             </ModalClose>
           </ModalHeader>
-          <ModalContent>
-            {this.props.children}
-          </ModalContent>
+          <ModalContentWrapper>
+            <ModalContent>
+              {this.props.children}
+            </ModalContent>
+          </ModalContentWrapper>
         </ModalContainer>
       </ModalWrapper>
     )

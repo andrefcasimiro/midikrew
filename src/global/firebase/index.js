@@ -3,13 +3,13 @@ import firebase from 'firebase'
 
 // Config keys are exposed and sent from client side when working with Firebase
 const firebaseConfig = {
-  apiKey: 'AIzaSyDqKgA_qV6OGvaNh4Klm-J7dDAjQ51YuCI',
-  authDomain: 'movie-discussion-app.firebaseapp.com',
-  databaseURL: 'https://movie-discussion-app.firebaseio.com',
-  projectId: 'movie-discussion-app',
-  storageBucket: '',
-  messagingSenderId: '512588117731',
-  appId: '1:512588117731:web:f5c9720f3754668ada77d6'
+  apiKey: "AIzaSyB1ZILKaDSKKBFxfaP7QRDfLeYa-XOg2pQ",
+  authDomain: "midikrew.firebaseapp.com",
+  databaseURL: "https://midikrew.firebaseio.com",
+  projectId: "midikrew",
+  storageBucket: "",
+  messagingSenderId: "789909489903",
+  appId: "1:789909489903:web:b1b54ae0bbd0a1fb84f31a"
 }
 
 firebase.initializeApp(firebaseConfig)

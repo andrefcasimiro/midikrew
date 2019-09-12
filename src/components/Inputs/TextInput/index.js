@@ -13,6 +13,7 @@ const TextInput = ({ name, label, value, onChange, onBlur, error, ...props }) =>
   <InputWrap>
     <Label>
       {label}
+      {props.icon && <props.icon />}
       {props.description && <Description>({props.description})</Description>}
     </Label>
     <StyledInput

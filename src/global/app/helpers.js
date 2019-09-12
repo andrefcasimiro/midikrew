@@ -1,10 +1,31 @@
 // @flow
 import React from 'react'
 import styled from 'styled-components'
+import StatefulModal from 'components/StatefulModal'
 import theme from 'global/theme'
+import Login from 'modals/Login'
+import Join from 'modals/Join'
+import firebase from 'global/firebase'
+import {
+  TiUser as LoginIcon,
+  TiUserAdd as JoinIcon,
+  TiEject as LogoutIcon,
+  TiFolderAdd as InstrumentIcon,
+  TiDocumentAdd as NewProjectIcon,
+  TiEdit as SaveProjectIcon,
+  TiFolderOpen as LoadProjectIcon,
+} from 'react-icons/ti'
 
 const Li = styled.li`
   cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: flex-start;
+
+  svg {
+    margin-right: 0.5rem;
+  }
 
   &:hover {
     color: ${theme.colors.monicastro.blue};
@@ -14,7 +35,12 @@ const Li = styled.li`
 const Menu = ({ options }) => {
   return (
     <ul>
-      {options.map((option, index) => <Li key={index} onClick={option.onClick}>{option.name}</Li>)}
+      {options.map((option, index) => option.onClick
+        ? <Li key={index} onClick={option.onClick}>{option.icon && <option.icon/>} {option.name}</Li>
+        : <Li key={index}>
+            <StatefulModal title={option.name} component={option.component}>{option.icon && <option.icon/>} {option.name}</StatefulModal>
+          </Li>
+      )}
     </ul>
   )
 }
@@ -23,33 +49,18 @@ const projectLinks = {
   name: 'Project',
   component: () => <Menu options={[
       {
-        name: 'New Project',
+        name: 'New',
+        icon: NewProjectIcon,
         onClick: () => console.log('...'),
       },
       {
-        name: 'Save Project',
+        name: 'Save',
+        icon: SaveProjectIcon,
         onClick: () => console.log('...'),
       },
       {
-        name: 'Load Project',
-        onClick: () => console.log('...'),
-      },
-    ]} />,
-}
-
-const settingLinks = {
-  name: 'Settings',
-  component: () => <Menu options={[
-      {
-        name: 'Set tempo',
-        onClick: () => console.log('...'),
-      },
-      {
-        name: 'Set number of steps',
-        onClick: () => console.log('...'),
-      },
-      {
-        name: 'Clear sequence',
+        name: 'Load',
+        icon: LoadProjectIcon,
         onClick: () => console.log('...'),
       },
     ]} />,
@@ -59,16 +70,9 @@ const accountLinks = {
   name: 'Account',
   component: () => <Menu options={[
       {
-        name: 'Manage projects',
-        onClick: () => console.log('...'),
-      },
-      {
-        name: 'Manage account details',
-        onClick: () => console.log('...'),
-      },
-      {
         name: 'Log out',
-        onClick: () => console.log('log out'),
+        icon: LogoutIcon,
+        onClick: () => firebase.auth().signOut(),
       },
     ]} />,
 }
@@ -78,18 +82,66 @@ const memberLinks = {
   component: () => <Menu options={[
       {
         name: 'Login',
-        onClick: () => console.log('...'),
+        icon: LoginIcon,
+        component: props => <Login {...props} />,
       },
       {
         name: 'Join',
-        onClick: () => console.log('log out'),
+        icon: JoinIcon,
+        component: props => <Join {...props} />,
+      },
+    ]} />,
+}
+
+const instrumentsMenu = {
+  name: 'Instruments',
+  component: () => <Menu options={[
+      {
+        name: 'Drums',
+        icon: InstrumentIcon,
+        component: () => <Menu options={[
+          {
+            name: 'Roland TR-505',
+            onClick: () => console.log('teste'),
+          },
+          {
+            name: 'Roland TR-606',
+            onClick: () => console.log('teste'),
+          },
+          {
+            name: 'Roland TR-707',
+            onClick: () => console.log('teste'),
+          },
+          {
+            name: 'Roland TR-808',
+            onClick: () => console.log('teste'),
+          },
+          {
+            name: 'Roland TR-909',
+            onClick: () => console.log('teste'),
+          },
+        ]} />,
+      },
+      {
+        name: 'Bass',
+        icon: InstrumentIcon,
+        component: () => <Menu options={[
+          {
+            name: 'Roland TB-303',
+            onClick: () => console.log('teste'),
+          },
+          {
+            name: 'Moog Bass',
+            onClick: () => console.log('teste'),
+          },
+        ]} />,
       },
     ]} />,
 }
 
 export const loggedInLinks = [
   projectLinks,
-  settingLinks,
+  instrumentsMenu,
   accountLinks,
 ]
 

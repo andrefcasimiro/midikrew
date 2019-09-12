@@ -7,7 +7,7 @@ export type Form = {
   // Label to be rendered above the form field
   label: string,
   // The input type of the input component
-  type: 'text' | 'number' | 'select',
+  type: 'text' | 'number' | 'select' | 'password' | 'email',
   // If input has specific instructions, specifiy them using the description property
   description?: string,
   // Useful for doing logic before submitting the form

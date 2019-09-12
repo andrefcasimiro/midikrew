@@ -5,12 +5,12 @@ export const InputWrap = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 2;
-  margin: 1rem;
+  margin-bottom: 3rem;
 `
 
 export const Label = styled.p`
   font-size: 1.5rem;
-  color: ${theme.colors.themes.common.white};
+  color: ${theme.colors.monicastro.darkGrey};
   margin: .5rem 0;
 `
 
@@ -24,7 +24,7 @@ export const Description = styled(Error)`
   display: inline;
   margin-left: 0.5rem;
   font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.3);
+  color: ${theme.colors.monicastro.darkGrey};
 `
 
 export const StyledInput = styled.input`
@@ -34,5 +34,6 @@ export const StyledInput = styled.input`
   width: 100%;
   min-height: 3.5rem;
   padding: .5rem;
-  border: none;
+  border: 0.1rem solid ${theme.colors.monicastro.darkGrey};
+  opacity: 0.6;
 `

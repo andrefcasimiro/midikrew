@@ -2,7 +2,7 @@
 import { database } from 'global/firebase'
 import { compose, withProps, type Component } from 'recompose'
 
-type Endpoint = 'movies'
+export type Endpoint = 'movies'
 
 type Added = {
   submit: Function,
