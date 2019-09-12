@@ -33,7 +33,7 @@ const Header = ({ user }) => {
           ? <Link key={index} href={navLink.to || '#'} onClick={navLink.onClick || null}>
               {navLink.name}
             </Link>
-          : <StatefulLink key={index} component={navLink.component}>
+          : <StatefulLink key={index} component={navLink.component} data={user}>
               <Link>{navLink.name}</Link>
             </StatefulLink>
         )}

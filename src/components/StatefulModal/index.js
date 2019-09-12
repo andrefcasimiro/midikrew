@@ -1,13 +1,15 @@
 // @flow
-import React, { type Node } from 'react'
-import { compose, type HOC, type Component } from 'recompose'
+import React, { type Node, Component } from 'react'
+import { compose, type HOC } from 'recompose'
 import withOpen from 'hocs/withOpen'
 import Modal from 'modals/_Modal'
 import { Row } from 'componentsStyled/Layout'
 import { Wrapper } from './styled'
 
 type Props = {|
-  component: Component,
+  component: Component<{
+    close: Function,
+  }, {}>,
   children: Node,
   title: string,
 |}
@@ -24,7 +26,7 @@ const StatefulModal = ({ isOpen, toggleOpen, component: C, children, title }) =>
         </Wrapper>
         {isOpen &&
           <Modal title={title} close={toggleOpen}>
-            <C />
+            <C close={toggleOpen} />
           </Modal>
         }
       </Wrapper>

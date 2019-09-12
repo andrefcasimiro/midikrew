@@ -16,7 +16,7 @@ export const AbsoluteWrapper = styled.div`
   top: 0.6rem;
   left: -1.2rem;
   width: 7.5rem;
-  min-height: 8rem;
+  min-height: 4rem;
   overflow-y: auto;
   background: ${theme.colors.monicastro.white};
   border-left: 1px solid ${theme.colors.monicastro.grey};

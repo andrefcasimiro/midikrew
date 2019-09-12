@@ -1,12 +1,11 @@
 // @flow
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import theme from 'global/theme'
-import effect from './effect'
 
 export const Button = styled.button`
   background: rgba(255, 255, 255, 0.15);
-  color: ${theme.colors.themes.common.white};
-  border: 0.1rem solid rgba(255, 255, 255, 0.5);
+  color: ${theme.colors.monicastro.dark};
+  border: 0.1rem solid ${theme.colors.monicastro.darkGrey};
 
   display: flex;
   flex-direction: row;
@@ -15,8 +14,6 @@ export const Button = styled.button`
 
   height: 3.2rem;
   min-width: 5rem;
-
-  padding: 0 1rem;
 
   text-align: center;
 
@@ -27,8 +24,6 @@ export const Button = styled.button`
   transition: .25s ease;
   cursor: pointer;
   opacity: 0.6;
-
-  ${effect};
 
   &:hover {
     opacity: 1;
@@ -43,4 +38,16 @@ export const Submit = styled(Button)`
   margin-top: 2rem;
   width: 100%;
   min-height: 5rem;
+
+  ${p => p.disabled && css`
+    opacity: 0.1;
+  `};
+
+  &:hover {
+    ${p => p.disabled && css`
+      opacity: 0.1;
+    `};
+  }
+
+  font-size: 1.4rem;
 `

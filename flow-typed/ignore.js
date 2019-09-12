@@ -28,3 +28,7 @@ declare module 'ramda' {
 declare module 'firebase/auth' {
   declare module.exports: any
 }
+
+declare module 'react-with-firebase-auth' {
+  declare module.exports: any
+}

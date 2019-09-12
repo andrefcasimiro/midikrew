@@ -1,12 +1,12 @@
 // @flow
 import React from 'react'
-import Movies from 'containers/Movies'
-import UserTools from 'containers/UserTools'
+import SequenceManager from 'components/SequenceManager'
 
 const Home = () => {
 
   return (
     <React.Fragment>
+      <SequenceManager />
     </React.Fragment>
   )
 }

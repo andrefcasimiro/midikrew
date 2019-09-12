@@ -1,6 +1,7 @@
 // @flow
 import styled, { keyframes } from 'styled-components'
 import theme from 'global/theme'
+// $Ignore
 import { mq } from 'common/mediaQueries'
 
 const modalFadeDuration = 250
@@ -31,6 +32,8 @@ export const ModalWrapper = styled.div`
 
   animation: ${fadeIn} ${modalFadeDuration}ms ease;
   backdrop-filter: blur(5px);
+
+  cursor: auto;
 `
 
 export const ModalContainer = styled.div`
@@ -45,7 +48,6 @@ export const ModalContainer = styled.div`
   overflow: auto;
 
   width: calc(100% - 120px);
-  min-height: calc(100% - 300px);
   max-width: 550px;
   max-height: calc(100% - 80px);
 
@@ -95,15 +97,24 @@ export const ModalClose = styled.div`
   font-size: 1.8rem;
 
   transition: 0.2s all;
-  cursor: pointer;
   opacity: 0.8;
+
+  cursor: pointer;
 
   &:hover {
     opacity: 1;
   }
 `
 
+export const ModalContentWrapper = styled.div`
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+`
+
 export const ModalContent = styled.div`
+  width: 100%;
+  height: 100%;
   margin-top: 1rem;
-  padding: 1rem;
+  padding: 2rem;
 `

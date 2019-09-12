@@ -1,32 +1,40 @@
 // @flow
 import React from 'react'
 import * as yup from 'yup'
-import { compose, type HOC, withProps } from 'recompose'
-import withPost from 'hocs/withPost'
+import { compose, type HOC, withProps, branch } from 'recompose'
+import withPost, { type Endpoint } from 'hocs/withPost'
 import withForm from 'hocs/withForm'
 import TextInput from 'components/Inputs/TextInput'
 import { Submit } from 'componentsStyled/Buttons'
-import type { Form } from 'data/forms/types'
+import type { Form as FormType } from 'data/forms/types'
 
 type Props = {
   close: Function,
-  title: string,
-  form: Form[],
+  form: FormType[],
+  submitName: string,
+  withPostEndpoint?: Endpoint,
+  submitHandler?: Function,
 }
 
-const AddForm = ({ form, title, ...props }) => {
+/** A dynamic form that receives a list of fields and renders them with validation and a submit handler
+ * @param {String} submitName - Then presentational name of the submit button. By default, it's set as 'Submit'
+ * @param {FormType[]} form - The form object to be mapped both as jsx and as the dynamic schema
+ * @param {Function} close - Used as callback to close the modal once the submit returns successfully
+ * @param {Function} submitHandler - An alternative to using the withPost hoc injected submit function.
+ */
+const Form = ({ form, submitName = 'Submit', isSubmitting, ...props }) => {
   return (
     <React.Fragment>
       {form.map((field, index) =>
         <TextInput key={index} name={field.name} label={field.label} type={field.type} {...field} />
       )}
 
-      <Submit type='submit'>Submit</Submit>
+      <Submit type='submit' disabled={isSubmitting}>{submitName}</Submit>
     </React.Fragment>
   )
 }
 
-const arrangeValues = (values: Object, form: Array<Form>) => {
+const arrangeValues = (values: Object, form: Array<FormType>) => {
   let input = values
 
   form.forEach((entry) => {
@@ -47,6 +55,11 @@ const arrangeValues = (values: Object, form: Array<Form>) => {
 }
 
 const enhancer: HOC<*, Props> = compose(
+  branch(props =>
+    props.submitHandler
+      ? null
+      : withPost(props.withPostEndpoint)
+  ),
   withProps(props => {
     if (!props.form) {
       return
@@ -77,15 +90,24 @@ const enhancer: HOC<*, Props> = compose(
       customSchema,
     }
   }),
-  withPost('movies'),
   withForm({
     onSubmit: props => values => {
       const input = arrangeValues(values, props.form)
 
+      if (props.submitHandler) {
+        return props.submitHandler(input)
+      }
+
       return props.submit(input)
     },
-    onSuccess: props => props.close(),
+    onSuccess: props => result => {
+      if (!result) {
+        return
+      }
+
+      return props.close()
+    },
   }),
 )
 
-export default enhancer(AddForm)
+export default enhancer(Form)

@@ -47,6 +47,7 @@ export const GlobalStyle = createGlobalStyle`
   ul {
     padding: 0;
     list-styled: none;
+    font-size: 1.4rem;
   }
 
   h1, h2, h3, h4, h5, p {

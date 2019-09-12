@@ -21,7 +21,6 @@ export const Field = styled.p`
   font-weight: bold;
   margin: 0;
   padding: 0.1rem;
-  text-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.5);
 `
 
 export const Text = styled.p`
@@ -30,7 +29,10 @@ export const Text = styled.p`
   font-weight: normal;
   margin: 0;
   padding: 0.1rem;
-  text-shadow: 0.1rem 0.2rem 0.2rem rgba(0, 0, 0, 0.2);
+
+  margin: ${p => p.margin || 0};
+
+  color: ${p => p.error ? theme.colors.themes.hippocampus.red : theme.colors.monicastro.dark};
 `
 
 export const Link = styled.a`

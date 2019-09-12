@@ -1,6 +1,5 @@
 // @flow
 import styled from 'styled-components'
-import { Button } from 'componentsStyled/Buttons'
 import theme from 'global/theme'
 import { Row } from '../Layout'
 
@@ -54,21 +53,11 @@ export const TitleSection = styled(BoxSection)`
   box-shadow: none;
 `
 
-export const GlassWrapper = styled(Button)`
-  margin: 0;
-  height: 6rem;
-  border-top: none;
-  border-bottom: none;
-  opacity: 1;
-  background: none;
+export const Ul = styled.ul`
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+`
 
-  &:hover {
-    &::before {
-    }
-
-    &::after {
-      display: none;
-
-    }
-  }
+export const Li = styled.ul`
+  padding: 0.5rem;
 `
