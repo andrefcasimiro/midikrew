@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { compose, type HOC, withHandlers } from 'recompose'
 import SamplePlayer from 'components/SamplePlayer'
 import INSTRUMENT_ACTIONS from 'data/instrument/actions'
+import { PLAYER_STATE } from 'data/track/reducer'
 import {
   Step,
 } from './styled'
@@ -15,6 +16,8 @@ for (let i = 0; i < 16; i++) {
   generator.push(i)
 }
 
+let canPlay = true
+
 const Grid = ({
   handleSelection,
   instruments, // from redux track tree
@@ -23,17 +26,28 @@ const Grid = ({
   currentSequence,
   sample,
   audioContext, // from redux track tree
-  isPlaying, // from redux track tree
+  playerState, // from redux track tree
 }) => {
-  let sequence = instruments.find(i => i.id === instrumentOwner)
-  sequence = sequence.sequences && sequence.sequences[currentSequence]
+  const instrument = instruments.find(i => i.id === instrumentOwner)
+  const sequence = instrument.sequences && instrument.sequences[currentSequence]
 
   return (
     <React.Fragment>
       {generator.map(index => {
-        const active = sequence && sequence.includes(index)
-        const trigger = isPlaying && index === currentStep && sequence && sequence.includes(index)
 
+        const active = sequence && sequence.includes(index)
+        const trigger = canPlay && active && playerState === PLAYER_STATE.playing && index === currentStep
+
+        // Avoids an accidental retriggering caused by the nature of this component's lifecycle update
+        if (trigger) {
+          canPlay = false
+
+          setTimeout(() => {
+            console.log('canPlay? ', canPlay)
+            canPlay = true
+            console.log('canPlay? ', canPlay)
+          }, 100)
+        }
         return (
           <Step active={active} key={index} index={index} onClick={() => handleSelection(index)}>
             <SamplePlayer sample={sample} trigger={trigger} audioContext={audioContext} />
@@ -49,7 +63,7 @@ const mapStateToProps = state => {
   return {
     currentSequence: state.track.currentSequence,
     audioContext: state.track.audioContext,
-    isPlaying: state.track.isPlaying,
+    playerState: state.track.playerState,
     instruments: state.instrument.instruments,
   }
 }
