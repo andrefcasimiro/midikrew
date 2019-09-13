@@ -23,8 +23,8 @@ import { PLAYER_STATE } from 'data/track/reducer'
 import {
   StyledBoxSection as BoxSection,
   MainContainer,
-  LeftContainer,
-  RightContainer,
+  TopContainer,
+  BottomContainer,
   Wrapper,
   Column,
   Instrument,
@@ -61,16 +61,14 @@ const SequenceManager = ({
       <BoxSection>
         {/* Sequence List */}
         <MainContainer>
-          <LeftContainer>
+          <TopContainer>
+            <IconButton onClick={removeSequence} disabled={sequences.length <= 1}><RemoveIcon /></IconButton>
             <IconButton onClick={handlePlayer}>{playerState === PLAYER_STATE.playing ? <PauseIcon /> : <PlayIcon />}</IconButton>
             <IconButton onClick={() => addSequence(newSequence)}><PlusIcon /></IconButton>
-            <IconButton onClick={removeSequence} disabled={sequences.length <= 1}>
-              <RemoveIcon />
-            </IconButton>
-          </LeftContainer>
-          <RightContainer>
+          </TopContainer>
+          <BottomContainer>
             {sequences.map((sequence, index) => <Sequence key={sequence.id} id={index} />)}
-          </RightContainer>
+          </BottomContainer>
         </MainContainer>
       </BoxSection>
 

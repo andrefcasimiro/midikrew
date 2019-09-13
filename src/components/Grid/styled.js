@@ -11,6 +11,7 @@ export const Step = styled.div`
           ? theme.colors.monicastro.blue
           : p.index % 4 === 0 ? theme.colors.monicastro.darkGreyLight : theme.colors.monicastro.grey
   };
+
   border-right: ${p => p.active
     ? `1px solid ${theme.colors.monicastro.blue}`
     : `1px solid ${theme.colors.monicastro.darkGrey}`

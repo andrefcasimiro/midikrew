@@ -14,7 +14,7 @@ type Props = {
 const Sequence = ({ id, currentSequence, setCurrentSequence }) => {
 
   return (
-    <Wrapper onClick={() => setCurrentSequence(id)} active={id === currentSequence}>
+    <Wrapper onClick={id !== currentSequence ? () => setCurrentSequence(id) : null} active={id === currentSequence}>
       {id + 1}
     </Wrapper>
   )
@@ -23,7 +23,7 @@ const Sequence = ({ id, currentSequence, setCurrentSequence }) => {
 const mapStateToProps = state => {
 
   return {
-    currentSequence: state.currentSequence,
+    currentSequence: state.track.currentSequence,
   }
 }
 

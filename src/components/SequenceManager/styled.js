@@ -21,7 +21,7 @@ export const MainContainer = styled.div`
   max-width: 80rem;
 `
 
-export const LeftContainer = styled.div`
+export const TopContainer = styled.div`
   width: 5rem;
   height: 100%;
   margin-bottom: 1rem;
@@ -30,7 +30,7 @@ export const LeftContainer = styled.div`
   justify-content: center;
 `
 
-export const RightContainer = styled.div`
+export const BottomContainer = styled.div`
   width: 100%;
   display: flex;
   flex-wrap: wrap;
@@ -62,7 +62,7 @@ export const Column = styled.div`
 
 `
 
-export const Instrument = styled(LeftContainer)`
+export const Instrument = styled(TopContainer)`
   background: ${theme.colors.monicastro.dark};
   color: ${theme.colors.monicastro.white};
   width: 10rem;
@@ -80,10 +80,9 @@ export const Instrument = styled(LeftContainer)`
   ${p => p.blank && css`
     background: none;
   `}
-
 `
 
-export const GridWrapper = styled(RightContainer)`
+export const GridWrapper = styled(BottomContainer)`
   background: none;
   max-width: none;
   min-width: none;

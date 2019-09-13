@@ -5,7 +5,7 @@ import type { Instrument } from './types'
 const Types = {
   ADD_INSTRUMENT: "ADD_INSTRUMENT",
   REMOVE_INSTRUMENT: "REMOVE_INSTRUMENT",
-  UPDATE_INSTRUMENT: "UPDATE_INSTRUMENT",
+  UPDATE_SEQUENCE: "UPDATE_SEQUENCE",
 }
 
 // actions
@@ -19,14 +19,14 @@ const removeInstrument = (payload: number) => ({
   payload,
 })
 
-const updateInstrument = (payload: { props: any, id: number }) => ({
-  type: Types.UPDATE_INSTRUMENT,
+const updateSequence = (payload: { sequence: Array<number>, sequenceID: number, instrumentID: number }) => ({
+  type: Types.UPDATE_SEQUENCE,
   payload,
 })
 
 export default {
   addInstrument,
   removeInstrument,
-  updateInstrument,
+  updateSequence,
   Types,
 }

@@ -1,7 +1,8 @@
 // @flow
 import React from 'react'
+import * as R from 'ramda'
 import { connect } from 'react-redux'
-import { compose, type HOC, withHandlers, withProps } from 'recompose'
+import { compose, type HOC, withHandlers } from 'recompose'
 import SamplePlayer from 'components/SamplePlayer'
 import INSTRUMENT_ACTIONS from 'data/instrument/actions'
 import {
@@ -19,20 +20,19 @@ const Grid = ({
   instruments, // from redux track tree
   instrumentOwner, // from parent component
   currentStep,
+  currentSequence,
   sample,
   audioContext, // from redux track tree
   isPlaying, // from redux track tree
 }) => {
-  const currentInstrument = instruments.find(instrument => instrument.id === instrumentOwner)
-  let currentSequence = currentInstrument && currentInstrument.sequences
-  ? currentInstrument.sequences.slice()
-  : []
+  let sequence = instruments.find(i => i.id === instrumentOwner)
+  sequence = sequence.sequences && sequence.sequences[currentSequence]
 
   return (
     <React.Fragment>
       {generator.map(index => {
-        const active = currentSequence && currentSequence.includes(index)
-        const trigger = isPlaying && index === currentStep && currentSequence && currentSequence.includes(index)
+        const active = sequence && sequence.includes(index)
+        const trigger = isPlaying && index === currentStep && sequence && sequence.includes(index)
 
         return (
           <Step active={active} key={index} index={index} onClick={() => handleSelection(index)}>
@@ -55,7 +55,7 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = {
-  updateInstrument: INSTRUMENT_ACTIONS.updateInstrument,
+  updateSequence: INSTRUMENT_ACTIONS.updateSequence,
 }
 
 const enhancer: HOC<*, {}> = compose(
@@ -63,19 +63,24 @@ const enhancer: HOC<*, {}> = compose(
   withHandlers({
     handleSelection: props => index => {
       const currentInstrument = props.instruments.find(instrument => instrument.id === props.instrumentOwner)
-      let currentSequence = currentInstrument && currentInstrument.sequences
-      ? currentInstrument.sequences.slice()
-      : []
 
-      if (currentSequence.includes(index)) { // REMOVE
-        const entry = currentSequence.indexOf(index)
-        currentSequence.splice(entry, 1)
+      let sequence = R.path(['sequences', props.currentSequence], currentInstrument)
+        ? currentInstrument.sequences[props.currentSequence].slice()
+        : []
+
+      if (sequence.includes(index)) { // REMOVE
+        const entry = sequence.indexOf(index)
+        sequence.splice(entry, 1)
       } else { // ADD
-        currentSequence = currentSequence.concat(index)
+        sequence = sequence.concat(index)
       }
 
-      props.updateInstrument({ props: { sequences: currentSequence }, id: props.instrumentOwner })
-    }
+      props.updateSequence({
+        sequence,
+        sequenceID: props.currentSequence,
+        instrumentID: props.instrumentOwner,
+      })
+    },
   }),
 )
 
