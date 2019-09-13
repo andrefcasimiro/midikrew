@@ -8,6 +8,7 @@ export default {
     monicastro: { // https://www.color-hex.com/color-palette/82487
       white: '#ffffff',
       grey: '#f3f3f3',
+      darkGreyLight: '#e3e3e3',
       darkGrey: '#aaaaaa',
       dark: '#3a3a3c',
       yellow: '#ffdd5e',

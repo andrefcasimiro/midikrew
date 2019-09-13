@@ -13,9 +13,9 @@ export const RelativeWrapper = styled.div`
 
 export const AbsoluteWrapper = styled.div`
   position: absolute;
-  top: 0.6rem;
+  top: 0.5rem;
   left: -1.2rem;
-  width: 7.5rem;
+  width: 10rem;
   min-height: 4rem;
   overflow-y: auto;
   background: ${theme.colors.monicastro.white};
@@ -37,4 +37,6 @@ export const AbsoluteWrapper = styled.div`
     min-width: 16rem;
     left: -4rem;
   }
+
+  border: 1px solid ${theme.colors.monicastro.darkGreyLight};
 `
