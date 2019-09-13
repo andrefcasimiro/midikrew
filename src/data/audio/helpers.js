@@ -9,7 +9,7 @@ export const loadSample = async (
 ) => {
   var request = new XMLHttpRequest()
 
-  var originalUrl = url
+//  var originalUrl = url
   url = url.replace('public/', '/')
 
   request.open('GET', url, true)

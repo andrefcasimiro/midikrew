@@ -1,4 +1,3 @@
-// @flow
 import tr909kick from 'assets/samples/tr909/909Kick.WAV'
 import tr909cymbal from 'assets/samples/tr909/909Cymbal.WAV'
 import tr909clap from 'assets/samples/tr909/909Clap.WAV'
@@ -9,6 +8,23 @@ import tr909mediumTom from 'assets/samples/tr909/909MediumTom.WAV'
 import tr909highTom from 'assets/samples/tr909/909HighTom.WAV'
 import tr909rimshot from 'assets/samples/tr909/909Rimshot.WAV'
 import tr909snare from 'assets/samples/tr909/909Snare.WAV'
+
+export const tr909Minimal = [
+  {
+    id: `Instrument ${Date.now() + 1}`,
+    name: '909 Kick',
+    samplePath: tr909kick,
+    sampleSource: undefined,
+    sequences: [],
+  },
+  {
+    id: `Instrument ${Date.now() + 9}`,
+    name: '909 Snare',
+    samplePath: tr909snare,
+    sampleSource: undefined,
+    sequences: [],
+  },
+]
 
 export const tr909 = [
   {
@@ -62,13 +78,20 @@ export const tr909 = [
   },
   {
     id: `Instrument ${Date.now() + 8}`,
+    name: '909 High T',
+    samplePath: tr909highTom,
+    sampleSource: undefined,
+    sequences: [],
+  },
+  {
+    id: `Instrument ${Date.now() + 9}`,
     name: '909 Rim',
     samplePath: tr909rimshot,
     sampleSource: undefined,
     sequences: [],
   },
   {
-    id: `Instrument ${Date.now() + 9}`,
+    id: `Instrument ${Date.now() + 10}`,
     name: '909 Snare',
     samplePath: tr909snare,
     sampleSource: undefined,

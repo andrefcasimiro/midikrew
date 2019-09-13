@@ -32,3 +32,15 @@ declare module 'firebase/auth' {
 declare module 'react-with-firebase-auth' {
   declare module.exports: any
 }
+
+declare module 'lodash' {
+  declare module.exports: any
+}
+
+declare module 'react-redux' {
+  declare module.exports: any
+}
+
+declare module 'redux' {
+  declare module.exports: any
+}

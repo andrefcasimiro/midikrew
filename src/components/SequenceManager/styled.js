@@ -38,45 +38,6 @@ export const RightContainer = styled.div`
   justify-content: center;
 `
 
-export const Sequence = styled.div`
-  display: flex;
-  width: 2rem;
-  min-height: 2rem;
-  margin: 0.1rem;
-  height: 2rem;
-  background: ${p => p.active
-    ? theme.colors.monicastro.dark
-    : 'none'
-  };
-
-  border: ${p => p.active
-    ? 'none'
-    : `1px solid ${theme.colors.monicastro.dark}`
-  };
-
-  color: ${p => p.active ? theme.colors.monicastro.white : theme.colors.monicastro.dark };
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-`
-
-export const Button = styled.button`
-  min-width: 2rem;
-  height: 2rem;
-  margin: 0.1rem;
-  margin-right: 0.5rem;
-  background: ${theme.colors.monicastro.grey};
-  color: ${theme.colors.monicastro.dark};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 0.1rem solid;
-  border-color: ${theme.colors.monicastro.dark};
-  cursor: pointer;
-  opacity: ${p => p.disabled ? 0.3 : 1};
-`
-
 export const Wrapper = styled(BoxSection)`
   flex-direction: column;
   margin-top: 0;
@@ -130,19 +91,4 @@ export const GridWrapper = styled(RightContainer)`
   padding: 0;
   margin: 0;
   height: 100%;
-`
-
-export const InstrumentMenuColumn = styled(Column)`
-  height: 4rem;
-  border-bottom: none;
-
-  ${mq('max').tabletWide} {
-    height: 5rem;
-  }
-`
-
-export const InstrumentMenu = styled(Instrument)`
-  background: none;
-  display: flex;
-  flex-direction: row;
 `

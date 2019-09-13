@@ -51,3 +51,19 @@ export const Submit = styled(Button)`
 
   font-size: 1.4rem;
 `
+
+export const IconButton = styled.button`
+  min-width: 2rem;
+  height: 2rem;
+  margin: 0.1rem;
+  margin-right: 0.5rem;
+  background: ${theme.colors.monicastro.grey};
+  color: ${theme.colors.monicastro.dark};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.1rem solid;
+  border-color: ${theme.colors.monicastro.dark};
+  cursor: pointer;
+  opacity: ${p => p.disabled ? 0.3 : 1};
+`

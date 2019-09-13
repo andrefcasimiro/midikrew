@@ -4,6 +4,10 @@ import ReactDOM from 'react-dom'
 import App from 'containers/App'
 import FontFaceObserver from 'fontfaceobserver'
 import 'assets/fonts/index.css'
+import { Provider as ReduxProvider } from "react-redux"
+import configureStore from "global/store"
+
+const reduxStore = configureStore(window.REDUX_INITIAL_DATA);
 
 const fontObserver = new FontFaceObserver('defaultFont', {})
 
@@ -17,5 +21,9 @@ fontObserver.load()
 const element = document.getElementById('root')
 
 if (element) {
-  ReactDOM.render(<App />, element)
+  ReactDOM.render(
+    <ReduxProvider store={reduxStore}>
+      <App />
+    </ReduxProvider>
+  , element)
 }
