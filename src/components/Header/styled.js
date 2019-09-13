@@ -14,6 +14,7 @@ export const Container = styled(BoxSection)`
   max-height: 2.6rem;
   min-height: auto;
   padding: 1rem;
+  border-bottom: 1px solid ${theme.colors.monicastro.darkGrey};
 `
 
 // Offsets the content below the header

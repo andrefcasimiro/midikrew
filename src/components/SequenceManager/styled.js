@@ -1,7 +1,8 @@
 // @flow
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import theme from 'global/theme'
 import { BoxSection } from 'componentsStyled/Shared'
+import { mq } from 'common/mediaQueries'
 
 export const StyledBoxSection = styled(BoxSection)`
   margin-top: 1rem;
@@ -38,6 +39,7 @@ export const RightContainer = styled.div`
 `
 
 export const Sequence = styled.div`
+  display: flex;
   width: 2rem;
   min-height: 2rem;
   margin: 0.1rem;
@@ -51,6 +53,10 @@ export const Sequence = styled.div`
     ? 'none'
     : `1px solid ${theme.colors.monicastro.dark}`
   };
+
+  color: ${p => p.active ? theme.colors.monicastro.white : theme.colors.monicastro.dark };
+  align-items: center;
+  justify-content: center;
 
   cursor: pointer;
 `
@@ -78,6 +84,8 @@ export const Wrapper = styled(BoxSection)`
   padding: 0;
   width: 100%;
   justify-content: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 `
 
 export const Column = styled.div`
@@ -86,20 +94,32 @@ export const Column = styled.div`
   width: 100%;
   height: 2.2rem;
   border-bottom: 1px solid ${theme.colors.monicastro.dark};
+
+  ${mq('max').tabletWide} {
+    height: 2.6rem;
+  }
+
 `
 
 export const Instrument = styled(LeftContainer)`
   background: ${theme.colors.monicastro.dark};
   color: ${theme.colors.monicastro.white};
-  width: 6rem;
-  max-width: none;
-  min-width: none;
+  width: 10rem;
   margin: 0;
   padding: 0;
   height: 100%;
   min-height: 100%;
   display: flex;
   align-items: center;
+
+  ${mq('max').tabletWide} {
+    width: 7rem;
+  }
+
+  ${p => p.blank && css`
+    background: none;
+  `}
+
 `
 
 export const GridWrapper = styled(RightContainer)`
@@ -114,11 +134,15 @@ export const GridWrapper = styled(RightContainer)`
 
 export const InstrumentMenuColumn = styled(Column)`
   height: 4rem;
+  border-bottom: none;
+
+  ${mq('max').tabletWide} {
+    height: 5rem;
+  }
 `
 
 export const InstrumentMenu = styled(Instrument)`
   background: none;
   display: flex;
-  margin-left: 6rem;
   flex-direction: row;
 `

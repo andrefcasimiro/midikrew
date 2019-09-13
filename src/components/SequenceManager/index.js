@@ -1,16 +1,23 @@
 // @flow
 import React from 'react'
-import { compose, type HOC, withStateHandlers, } from 'recompose'
+import { compose, type HOC, withStateHandlers, withHandlers, lifecycle } from 'recompose'
 // $Ignore
 import kick606bd3 from 'assets/samples/mc303/606bd3.wav'
 // $Ignore
 import snare606sd1 from 'assets/samples/mc303/606sd1.wav'
 import {
-  GoPlay as PlayIcon,
   GoDiffAdded as PlusIcon,
   GoDiffRemoved as RemoveIcon,
 } from 'react-icons/go'
+import {
+  TiMediaPlay as PlayIcon,
+  TiMediaPause as PauseIcon,
+} from 'react-icons/ti'
+import Bpm from 'components/Bpm'
 import Grid from 'components/Grid'
+import {
+  loadSample,
+} from 'data/audio/helpers'
 import {
   StyledBoxSection as BoxSection,
   MainContainer,
@@ -25,6 +32,9 @@ import {
   InstrumentMenuColumn,
   InstrumentMenu,
 } from './styled'
+import {
+  tr909,
+} from './templates'
 
 type Props = {|
 
@@ -32,21 +42,50 @@ type Props = {|
 
 /**
  * Manages all sequencers in the song
- * @param {} param0
  */
 
+
+
+// type SequenceType = {
+//   id: string,
+//   pattern: Array<*>,
+//   numberOfSteps: number,
+// }
+
+// type InstrumentType = {
+//   id: string,
+//   name: string,
+//   sample: string,
+// }
+
+// Globals (don't hook this to state)
+
+let timerID
+
+const AudioContext = window.AudioContext || window.webkitAudioContext
+const audioContext = new AudioContext({
+  latencyHint: 'interactive',
+  sampleRate: 44100,
+})
+
+// End of globals
+
 const SequenceManager = ({
+  isPlaying,
+  togglePlayHandler,
+  currentStep,
   currentSequenceIndex,
   setCurrentSequence,
   sequences,
   addSequence,
   removeSequence,
   instruments,
-  addInstrument,
+  addInstrumentHandler,
   removeInstrument,
   updateSequence,
 }) => {
 
+  // Templates
   const newSequence = {
     id: `Sequence ${Date.now()}`,
     pattern: [],
@@ -56,10 +95,10 @@ const SequenceManager = ({
   const newInstrument = {
     id: `Instrument ${Date.now()}`,
     name: 'Snare',
-    sample: snare606sd1,
+    samplePath: snare606sd1,
+    sampleSource: undefined,
     sequences: [],
   }
-
 
   return (
     <React.Fragment>
@@ -67,7 +106,7 @@ const SequenceManager = ({
         {/* Sequence List */}
         <MainContainer>
           <LeftContainer>
-            <Button><PlayIcon /></Button>
+            <Button onClick={togglePlayHandler}>{isPlaying ? <PauseIcon /> : <PlayIcon />}</Button>
             <Button onClick={() => addSequence(newSequence)}><PlusIcon /></Button>
             <Button onClick={removeSequence} disabled={sequences.length <= 1}>
               <RemoveIcon />
@@ -75,7 +114,7 @@ const SequenceManager = ({
           </LeftContainer>
           <RightContainer>
             {sequences.map((sequence, index) =>
-              <Sequence onClick={() => setCurrentSequence(index)} key={sequence.id} active={currentSequenceIndex === index} />
+              <Sequence onClick={() => setCurrentSequence(index)} key={sequence.id} active={currentSequenceIndex === index}>{index + 1}</Sequence>
             )}
           </RightContainer>
         </MainContainer>
@@ -84,7 +123,7 @@ const SequenceManager = ({
           <InstrumentMenuColumn>
             <InstrumentMenu>
               <Button>
-                <PlusIcon onClick={() => addInstrument(newInstrument) }/>
+                <PlusIcon onClick={() => addInstrumentHandler(newInstrument) }/>
               </Button>
               <Button>
                 <RemoveIcon onClick={removeInstrument} />
@@ -94,17 +133,26 @@ const SequenceManager = ({
         </Wrapper>
         {/* Grid */}
         <Wrapper>
-          {instruments.map(instrument =>
+          <Column>
+            <Instrument blank/>
+            <GridWrapper blank>
+              <Bpm currentStep={currentStep} />
+            </GridWrapper>
+          </Column>
+          {instruments.map((instrument, index) =>
             <Column key={instrument.id}>
               <Instrument>
                 {instrument.name}
               </Instrument>
               <GridWrapper>
-                <Grid 
-                  instrumentOwner={instrument.id} 
-                  onChange={updateSequence} 
-                  currentSequence={instrument.sequences[currentSequenceIndex]} 
+                <Grid
+                  instrumentOwner={instrument.id}
+                  onChange={updateSequence}
+                  currentSequence={instrument.sequences[currentSequenceIndex]}
                   currentSequenceIndex={currentSequenceIndex}
+                  currentStep={currentStep}
+                  sample={instrument.sampleSource}
+                  audioContext={audioContext}
                 />
               </GridWrapper>
             </Column>
@@ -114,22 +162,17 @@ const SequenceManager = ({
   )
 }
 
-type SequenceType = {
-  id: string,
-  pattern: Array<*>,
-  numberOfSteps: number,
-}
-
-type InstrumentType = {
-  id: string,
-  name: string,
-  sample: string,
-}
-
 const enhancer: HOC<*, Props> = compose(
   withStateHandlers(
     {
+      isPlaying: false,
+
+      // Relates to all the steps in a pattern (where are we in the song?)
+      currentStep: 0,
+
+      // Relates to all the patterns
       currentSequenceIndex: 0,
+
       sequences: [
         {
           id: Date.now(),
@@ -137,16 +180,16 @@ const enhancer: HOC<*, Props> = compose(
           numberOfSteps: 16,
         },
       ],
-      instruments: [
-        {
-          id: `Instrument ${Date.now()}`,
-          name: `Kick`,
-          sample: kick606bd3,
-          sequences: [],
-        },
-      ],
+      instruments: [],
     },
     {
+      // Set play / stop
+      togglePlay: props => () => ({ isPlaying: !props.isPlaying }),
+
+
+      // Step Position
+      setCurrentStep: props => currentStep => ({ currentStep }),
+
       // Sequencer Position
       setCurrentSequence: props => currentSequenceIndex => ({ currentSequenceIndex }),
 
@@ -172,7 +215,6 @@ const enhancer: HOC<*, Props> = compose(
         const index = props.instruments.indexOf(entry)
         const instruments = props.instruments.slice()
 
-
         instruments[index] = {
           ...instruments[index],
           sequences: {
@@ -187,6 +229,70 @@ const enhancer: HOC<*, Props> = compose(
       }
     },
   ),
+  withHandlers({
+    addInstrumentHandler: props => instrument => {
+      if (instrument.length) {
+        console.log(instrument)
+        // Multiple instruments
+        instrument.forEach(i => {
+          loadSample(i.samplePath, audioContext, 1, 1, result => {
+            const _instrument = {
+              ...i,
+              sampleSource: result,
+            }
+
+            console.log(result)
+
+            props.addInstrument(_instrument)
+          })
+        })
+      } else {
+        // Only one instrument
+        loadSample(instrument.samplePath, audioContext, 1, 1, result => {
+          const _instrument = {
+            ...instrument,
+            sampleSource: result,
+          }
+
+          props.addInstrument(_instrument)
+        })
+      }
+    },
+  }),
+  withHandlers({
+    manageNextPosition: props => () => props.currentStep + 1 >= 16
+      ? props.setCurrentStep(0)
+      : props.setCurrentStep(props.currentStep + 1),
+  }),
+  withHandlers({
+    handlePlayer: props => () => {
+      const tempo = 120
+      const linesPerBeat = 4
+      const interval = ((Math.pow(10, 4) * 6) / linesPerBeat) / tempo
+
+      timerID = setInterval(() => props.manageNextPosition(), interval)
+    },
+    clearPlayer: () => () => clearInterval(timerID),
+  }),
+  withHandlers({
+    togglePlayHandler: props => () => {
+      if (!props.isPlaying) {
+        audioContext.resume()
+        props.handlePlayer()
+      } else {
+        audioContext.suspend()
+        props.clearPlayer()
+      }
+
+      props.togglePlay()
+    },
+  }),
+  lifecycle({
+    // If we want to load a bunch of default instruments! :-)
+    componentWillMount() {
+      this.props.addInstrumentHandler(tr909)
+    }
+  })
 )
 
 export default enhancer(SequenceManager)

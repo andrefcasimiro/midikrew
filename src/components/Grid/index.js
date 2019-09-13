@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
-import { compose, type HOC, withHandlers, withStateHandlers, lifecycle, } from 'recompose'
+import { compose, type HOC, withHandlers } from 'recompose'
+import SamplePlayer from 'components/SamplePlayer'
 import {
   Step,
 } from './styled'
@@ -10,11 +11,19 @@ type Props = {|
   onChange: (sequence: Array<*>, instrumentID: number) => mixed,
   currentSequence: Array<*>,
   currentSequenceIndex: number,
+  currentStep: number,
+  sample: {
+    start: number => mixed,
+  },
+  audioContext: any,
 |}
 
 const Grid = ({
   handleSelection,
   currentSequence,
+  currentStep,
+  sample,
+  audioContext,
 }) => {
   const generator = []
   for (let i = 0; i < 16; i++) {
@@ -23,8 +32,10 @@ const Grid = ({
 
   return (
     <React.Fragment>
-      {generator.map((note) =>
-        <Step active={currentSequence && currentSequence.includes(note)} key={note} index={note} onClick={() => handleSelection(note)} />
+      {generator.map(note =>
+        <Step active={currentSequence && currentSequence.includes(note)} key={note} index={note} onClick={() => handleSelection(note)}>
+          <SamplePlayer sample={sample} trigger={currentSequence && currentSequence.includes(note) && note === currentStep} audioContext={audioContext} />
+        </Step>
       )}
     </React.Fragment>
   )
@@ -35,8 +46,6 @@ const enhancer: HOC<*, Props> = compose(
     handleSelection: props => index => {
       let selectedSteps = props.currentSequence ? props.currentSequence.slice() : []
 
-      console.log(selectedSteps)
-
       if (selectedSteps.includes(index)) {
         // REMOVE
         const entry = selectedSteps.indexOf(index)
@@ -46,8 +55,6 @@ const enhancer: HOC<*, Props> = compose(
         // ADD
         selectedSteps = selectedSteps.concat(index)
       }
-
-      console.log('selectedSteps: ', selectedSteps)
 
       props.onChange(selectedSteps, props.instrumentOwner)
     }
