@@ -12,10 +12,9 @@ type Props = {|
   currentSequence: Array<*>,
   currentSequenceIndex: number,
   currentStep: number,
-  sample: {
-    start: number => mixed,
-  },
+  sample: Object,
   audioContext: any,
+  isPlaying: boolean,
 |}
 
 const Grid = ({
@@ -24,17 +23,18 @@ const Grid = ({
   currentStep,
   sample,
   audioContext,
+  isPlaying,
 }) => {
   const generator = []
   for (let i = 0; i < 16; i++) {
     generator.push(i)
   }
-
+  console.log('redrawing steps')
   return (
     <React.Fragment>
       {generator.map(note =>
         <Step active={currentSequence && currentSequence.includes(note)} key={note} index={note} onClick={() => handleSelection(note)}>
-          <SamplePlayer sample={sample} trigger={currentSequence && currentSequence.includes(note) && note === currentStep} audioContext={audioContext} />
+          <SamplePlayer sample={sample} trigger={isPlaying && note === currentStep && currentSequence && currentSequence.includes(note)} audioContext={audioContext} />
         </Step>
       )}
     </React.Fragment>

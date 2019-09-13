@@ -153,6 +153,7 @@ const SequenceManager = ({
                   currentStep={currentStep}
                   sample={instrument.sampleSource}
                   audioContext={audioContext}
+                  isPlaying={isPlaying}
                 />
               </GridWrapper>
             </Column>
@@ -232,7 +233,6 @@ const enhancer: HOC<*, Props> = compose(
   withHandlers({
     addInstrumentHandler: props => instrument => {
       if (instrument.length) {
-        console.log(instrument)
         // Multiple instruments
         instrument.forEach(i => {
           loadSample(i.samplePath, audioContext, 1, 1, result => {
@@ -240,8 +240,6 @@ const enhancer: HOC<*, Props> = compose(
               ...i,
               sampleSource: result,
             }
-
-            console.log(result)
 
             props.addInstrument(_instrument)
           })

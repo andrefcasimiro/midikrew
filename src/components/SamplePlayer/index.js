@@ -1,8 +1,6 @@
 // @flow
 type Props = {|
-  sample: {
-    start: number => mixed,
-  },
+  sample: Object,
   trigger: boolean,
   audioContext: any,
 |}
@@ -15,7 +13,7 @@ const SamplePlayer = ({ sample, trigger, audioContext }: Props) => {
     source.playbackRate.value = 1
     // Volume
     var gainNode = audioContext.createGain()
-    gainNode.gain.value = 1
+    gainNode.gain.value = sample.defaultVolume || 1
     source.connect(gainNode)
 
     gainNode.connect(audioContext.destination)

@@ -26,6 +26,8 @@ export const loadSample = async (
       // Volume
       var gainNode = audioContext.createGain()
       gainNode.gain.value = volume
+
+
       gainNode.connect(audioContext.destination)
       source.connect(gainNode)
 
