@@ -57,7 +57,7 @@ const Login = ({ close, user, signInWithEmailAndPassword, error }) => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <Form close={close} submitName='Login' form={form} submitHandler={submitHandler} />
       {error &&
         <React.Fragment>
@@ -65,7 +65,7 @@ const Login = ({ close, user, signInWithEmailAndPassword, error }) => {
           <Text error margin={`0.5rem 0 0 0`}>{error}</Text>
         </React.Fragment>
       }
-    </React.Fragment>
+    </>
   )
 }
 

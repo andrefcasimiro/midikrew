@@ -9,9 +9,7 @@ import {
   GoDiffAdded as PlusIcon,
   GoDiffRemoved as RemoveIcon,
 } from 'react-icons/go'
-import {
-  Menu,
-} from './styled'
+import { Menu } from './styled'
 
 const generator = (): Instrument => ({
   id: `instr-${Date.now()}`,
@@ -21,24 +19,20 @@ const generator = (): Instrument => ({
   sequences: [],
 })
 
-const InstrumentsManager = ({ addInstrument, removeInstrument }) => {
-  return (
-    <Menu>
-      <IconButton>
-        <PlusIcon title='Add a new instrument' onClick={() => addInstrument(generator()) }/>
-      </IconButton>
-      <IconButton>
-        <RemoveIcon title='Remove an existing instrument' onClick={removeInstrument} />
-      </IconButton>
-    </Menu>
-  )
-}
+const InstrumentsManager = ({ addInstrument, removeInstrument }) => (
+  <Menu>
+    <IconButton>
+      <PlusIcon title='Add a new instrument' onClick={() => addInstrument(generator()) }/>
+    </IconButton>
+    <IconButton>
+      <RemoveIcon title='Remove an existing instrument' onClick={removeInstrument} />
+    </IconButton>
+  </Menu>
+)
 
-const mapStateToProps = state => {
-  return {
-    instruments: state.instruments,
-  }
-}
+const mapStateToProps = state => ({
+  instruments: state.instruments,
+})
 
 const mapDispatchToProps = {
   addInstrument: INSTRUMENT_ACTIONS.addInstrument,

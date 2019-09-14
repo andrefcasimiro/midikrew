@@ -2,7 +2,7 @@
 import styled from 'styled-components'
 import theme from 'global/theme'
 
-export const BPMIndicator = styled.div`
+export const StepIndicator = styled.div`
   height: 100%;
   flex-grow: 1;
   border-bottom: ${

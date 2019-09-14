@@ -3,12 +3,10 @@ import React from 'react'
 import * as R from 'ramda'
 import { connect } from 'react-redux'
 import { compose, type HOC, withHandlers, withStateHandlers } from 'recompose'
-import SamplePlayer from 'components/SamplePlayer'
 import INSTRUMENT_ACTIONS from 'data/instrument/actions'
 import { PLAYER_STATE } from 'data/track/reducer'
-import {
-  Step,
-} from './styled'
+import SamplePlayer from '../SamplePlayer'
+import { Step } from './styled'
 
 
 const generator = []
@@ -16,7 +14,7 @@ for (let i = 0; i < 16; i++) {
   generator.push(i)
 }
 
-const Grid = ({
+const InstrumentGrid = ({
   interval, // from redux track tree
   handleSelection,
   instruments, // from redux track tree
@@ -102,4 +100,4 @@ const enhancer: HOC<*, {}> = compose(
   }),
 )
 
-export default enhancer(Grid)
+export default enhancer(InstrumentGrid)

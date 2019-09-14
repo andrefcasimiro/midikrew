@@ -11,21 +11,15 @@ type Props = {
   id: number, // The sequence index in the sequence list
 }
 
-const Sequence = ({ id, currentSequence, setCurrentSequence }) => {
+const Sequence = ({ id, currentSequence, setCurrentSequence }) => (
+  <Wrapper onClick={id !== currentSequence ? () => setCurrentSequence(id) : null} active={id === currentSequence}>
+    {id + 1}
+  </Wrapper>
+)
 
-  return (
-    <Wrapper onClick={id !== currentSequence ? () => setCurrentSequence(id) : null} active={id === currentSequence}>
-      {id + 1}
-    </Wrapper>
-  )
-}
-
-const mapStateToProps = state => {
-
-  return {
-    currentSequence: state.track.currentSequence,
-  }
-}
+const mapStateToProps = state => ({
+  currentSequence: state.track.currentSequence,
+})
 
 const mapDispatchToProps = {
   setCurrentSequence: ACTIONS.setCurrentSequence,

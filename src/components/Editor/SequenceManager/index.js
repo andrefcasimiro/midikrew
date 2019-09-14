@@ -11,17 +11,16 @@ import {
   TiMediaPause as PauseIcon,
   TiArrowLoop as LoopIcon,
 } from 'react-icons/ti'
-import Bpm from 'components/Bpm'
-import Grid from 'components/Grid'
-import Sequence from 'components/Sequence'
-import InstrumentsManager from 'components/InstrumentsManager'
-import GridSettings from 'components/GridSettings'
-import {
-  loadSample,
-} from 'data/audio/helpers'
+import CurrentStep from '../CurrentStep'
+import InstrumentGrid from '../InstrumentGrid'
+import Sequence from '../Sequence'
+import InstrumentsManager from '../InstrumentsManager'
+import SongSettings from '../SongSettings'
 import INSTRUMENT_ACTIONS from 'data/instrument/actions'
 import TRACK_ACTIONS from 'data/track/actions'
+import { loadPack } from 'data/audio/helpers'
 import { PLAYER_STATE, PLAYER_MODE } from 'data/track/reducer'
+import { IconButton } from 'componentsStyled/Buttons'
 import {
   StyledBoxSection as BoxSection,
   MainContainer,
@@ -33,10 +32,7 @@ import {
   Instrument,
   GridWrapper,
 } from './styled'
-import { IconButton } from 'componentsStyled/Buttons'
-import {
-  tr909 as tr909Minimal,
-} from '../../data/audio/templates'
+import { tr909 } from 'data/audio/tr909'
 
 // Globals
 let timerID
@@ -72,23 +68,22 @@ const SequenceManager = ({
 
       <SongTools>
         <InstrumentsManager />
-        <GridSettings />
+        <SongSettings />
       </SongTools>
 
         <Wrapper>
           <Column>
             <Instrument blank/>
-            <GridWrapper blank>
-              <Bpm currentStep={currentStep} />
-            </GridWrapper>
+            <GridWrapper blank><CurrentStep currentStep={currentStep} /></GridWrapper>
           </Column>
+
           {instruments.map((instrument, index) =>
             <Column key={instrument.id}>
               <Instrument>
                 <p>{instrument.name}</p>
               </Instrument>
               <GridWrapper>
-                <Grid
+                <InstrumentGrid
                   instrumentOwner={instrument.id}
                   currentStep={currentStep}
                   sample={instrument.sampleSource}
@@ -101,17 +96,15 @@ const SequenceManager = ({
   )
 }
 
-const mapStateToProps = state => {
-  return {
-    audioContext: state.track.audioContext,
-    bpm: state.track.bpm,
-    playerState: state.track.playerState,
-    playerMode: state.track.playerMode,
-    currentSequence: state.track.currentSequence,
-    sequences: state.track.sequences,
-    instruments: state.instrument.instruments,
-  }
-}
+const mapStateToProps = state => ({
+  audioContext: state.track.audioContext,
+  bpm: state.track.bpm,
+  playerState: state.track.playerState,
+  playerMode: state.track.playerMode,
+  currentSequence: state.track.currentSequence,
+  sequences: state.track.sequences,
+  instruments: state.instrument.instruments,
+})
 
 const mapDispatchToProps = {
   addInstrument: INSTRUMENT_ACTIONS.addInstrument,
@@ -138,42 +131,13 @@ const enhancer: HOC<*, {}> = compose(
     },
   ),
   withHandlers({
-    addInstrumentHandler: props => instrument => {
-      if (instrument.length) {
-        // Multiple instruments
-        instrument.forEach(i => {
-          loadSample(i.samplePath, props.audioContext, 1, 1, result => {
-            const _instrument = {
-              ...i,
-              sampleSource: result,
-            }
-
-            props.addInstrument(_instrument)
-          })
-        })
-      } else {
-        // Only one instrument
-        loadSample(instrument.samplePath, props.audioContext, 1, 1, result => {
-          const _instrument = {
-            ...instrument,
-            sampleSource: result,
-          }
-
-          props.addInstrument(_instrument)
-        })
-      }
-    },
-  }),
-  withHandlers({
     manageNextPosition: props => () => {
       if (props.currentStep + 1 >= 16) {
         if (props.playerMode === PLAYER_MODE.loop) {
           return props.setCurrentStep(0)
         }
 
-        console.log(props.currentSequence + 1, props.sequences.length)
-
-        if (props.currentSequence +2 <= props.sequences.length) {
+        if (props.currentSequence + 2 <= props.sequences.length) {
           props.setCurrentSequence(props.currentSequence + 1)
           props.setCurrentStep(0)
         } else {
@@ -210,9 +174,8 @@ const enhancer: HOC<*, {}> = compose(
       : props.setMode(PLAYER_MODE.loop),
   }),
   lifecycle({
-    // If we want to load a bunch of default instruments! :-)
-    componentWillMount() {
-      this.props.addInstrumentHandler(tr909Minimal)
+    componentDidMount() {
+      loadPack(tr909)
     },
 
     // If bpm changes, clear and reset interval of timerID
