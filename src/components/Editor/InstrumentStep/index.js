@@ -2,7 +2,7 @@
 import React from 'react'
 import * as R from 'ramda'
 import { connect } from 'react-redux'
-import { compose, type HOC, withHandlers, withStateHandlers } from 'recompose'
+import { compose, type HOC, withHandlers, withStateHandlers, withProps, lifecycle } from 'recompose'
 import INSTRUMENT_ACTIONS from 'data/instrument/actions'
 import type { Instrument } from 'data/instrument/types'
 import { PLAYER_STATE } from 'data/track/reducer'
@@ -32,16 +32,13 @@ const InstrumentStep = ({
   audioContext,
   handleSelection,
   instrument,
-  currentSequence,
   currentStep,
   canPlay,
   setCanPlay,
   interval,
   playerState,
+  selected,
 }) => {
-  const instrumentSequence = instrument.sequences && instrument.sequences[currentSequence]
-
-  const selected = instrumentSequence && instrumentSequence.includes(index)
   const trigger = canPlay && selected && playerState === PLAYER_STATE.playing && index === currentStep
 
   // Avoids an accidental retriggering caused by the nature of this component's lifecycle update
@@ -51,6 +48,7 @@ const InstrumentStep = ({
     setTimeout(() => { setCanPlay(true) }, interval)
   }
 
+  console.log('rerendering')
   return (
     <React.Fragment>
       <Step selected={selected} key={index} index={index} onClick={() => handleSelection(index)}>
@@ -106,6 +104,25 @@ const enhancer: HOC<*, Props> = compose(
       })
     },
   }),
+  withProps(props => {
+
+    const instrumentSequence = props.instrument.sequences && props.instrument.sequences[props.currentSequence]
+
+    const selected = instrumentSequence && instrumentSequence.includes(props.index)
+
+    return {
+      selected,
+    }
+  }),
+  lifecycle({
+    shouldComponentUpdate(nextProps) {
+      if (!this.props.selected && !nextProps.selected) {
+        return false
+      }
+
+      return true
+    }
+  })
 )
 
 export default enhancer(InstrumentStep)

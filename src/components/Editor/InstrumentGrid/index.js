@@ -15,8 +15,6 @@ const InstrumentGrid = ({
 }) => {
   const instrument = instruments.find(i => i.id === instrumentOwner)
 
-  // Should only generate once. Find a way to remove currentStep from react state and pass it to instrumentStep
-  console.log('re rendering')
   return (
     <React.Fragment>
       {generator.map(stepIndex => {
