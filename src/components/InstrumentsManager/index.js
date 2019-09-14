@@ -26,10 +26,10 @@ const InstrumentsManager = ({ addInstrument, removeInstrument }) => {
   return (
     <Menu>
       <IconButton>
-        <PlusIcon onClick={() => addInstrument(generator()) }/>
+        <PlusIcon title='Add a new instrument' onClick={() => addInstrument(generator()) }/>
       </IconButton>
       <IconButton>
-        <RemoveIcon onClick={removeInstrument} />
+        <RemoveIcon title='Remove an existing instrument' onClick={removeInstrument} />
       </IconButton>
     </Menu>
   )

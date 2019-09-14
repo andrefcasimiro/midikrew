@@ -66,4 +66,9 @@ export const IconButton = styled.button`
   border-color: ${theme.colors.monicastro.dark};
   cursor: pointer;
   opacity: ${p => p.disabled ? 0.3 : 1};
+
+  ${p => p.enabled && css`
+    background: ${theme.colors.monicastro.dark};
+    color: ${theme.colors.monicastro.grey};
+  `}
 `

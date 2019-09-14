@@ -9,20 +9,23 @@ import {
 import {
   TiMediaPlay as PlayIcon,
   TiMediaPause as PauseIcon,
+  TiArrowLoop as LoopIcon,
 } from 'react-icons/ti'
 import Bpm from 'components/Bpm'
 import Grid from 'components/Grid'
 import Sequence from 'components/Sequence'
 import InstrumentsManager from 'components/InstrumentsManager'
+import GridSettings from 'components/GridSettings'
 import {
   loadSample,
 } from 'data/audio/helpers'
 import INSTRUMENT_ACTIONS from 'data/instrument/actions'
 import TRACK_ACTIONS from 'data/track/actions'
-import { PLAYER_STATE } from 'data/track/reducer'
+import { PLAYER_STATE, PLAYER_MODE } from 'data/track/reducer'
 import {
   StyledBoxSection as BoxSection,
   MainContainer,
+  SongTools,
   TopContainer,
   BottomContainer,
   Wrapper,
@@ -32,7 +35,7 @@ import {
 } from './styled'
 import { IconButton } from 'componentsStyled/Buttons'
 import {
-  tr909Minimal,
+  tr909 as tr909Minimal,
 } from '../../data/audio/templates'
 
 // Globals
@@ -47,24 +50,19 @@ const SequenceManager = ({
   addSequence,
   removeSequence,
   instruments, // from redux instrument tree
+  handleMode,
+  playerMode,
 }) => {
-
-  // Templates
-  const newSequence = {
-    id: `Sequence ${Date.now()}`,
-    pattern: [],
-    numberOfSteps: 16,
-  }
-
   return (
     <React.Fragment>
       <BoxSection>
         {/* Sequence List */}
         <MainContainer>
           <TopContainer>
-            <IconButton onClick={removeSequence} disabled={sequences.length <= 1}><RemoveIcon /></IconButton>
-            <IconButton onClick={handlePlayer}>{playerState === PLAYER_STATE.playing ? <PauseIcon /> : <PlayIcon />}</IconButton>
-            <IconButton onClick={() => addSequence(newSequence)}><PlusIcon /></IconButton>
+            <IconButton title='Remove a sequence' onClick={removeSequence} disabled={sequences.length <= 1}><RemoveIcon /></IconButton>
+            <IconButton title='Play / pause player' onClick={handlePlayer}>{playerState === PLAYER_STATE.playing ? <PauseIcon /> : <PlayIcon />}</IconButton>
+            <IconButton title='Lock / unlock the sequencer for a specific loop' onClick={handleMode} enabled={playerMode === PLAYER_MODE.loop}><LoopIcon /></IconButton>
+            <IconButton title='Add a new sequence' onClick={addSequence}><PlusIcon /></IconButton>
           </TopContainer>
           <BottomContainer>
             {sequences.map((sequence, index) => <Sequence key={sequence.id} id={index} />)}
@@ -72,7 +70,10 @@ const SequenceManager = ({
         </MainContainer>
       </BoxSection>
 
-      <InstrumentsManager />
+      <SongTools>
+        <InstrumentsManager />
+        <GridSettings />
+      </SongTools>
 
         <Wrapper>
           <Column>
@@ -84,7 +85,7 @@ const SequenceManager = ({
           {instruments.map((instrument, index) =>
             <Column key={instrument.id}>
               <Instrument>
-                {instrument.name}
+                <p>{instrument.name}</p>
               </Instrument>
               <GridWrapper>
                 <Grid
@@ -103,8 +104,11 @@ const SequenceManager = ({
 const mapStateToProps = state => {
   return {
     audioContext: state.track.audioContext,
+    bpm: state.track.bpm,
     playerState: state.track.playerState,
+    playerMode: state.track.playerMode,
     currentSequence: state.track.currentSequence,
+    sequences: state.track.sequences,
     instruments: state.instrument.instruments,
   }
 }
@@ -112,8 +116,13 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
   addInstrument: INSTRUMENT_ACTIONS.addInstrument,
   removeInstrument: INSTRUMENT_ACTIONS.removeInstrument,
+  setInterval: TRACK_ACTIONS.setInterval,
+  addSequence: TRACK_ACTIONS.addSequence,
+  setCurrentSequence: TRACK_ACTIONS.setCurrentSequence,
+  removeSequence: TRACK_ACTIONS.removeSequence,
   play: TRACK_ACTIONS.play,
   pause: TRACK_ACTIONS.pause,
+  setMode: TRACK_ACTIONS.setMode,
 }
 
 const enhancer: HOC<*, {}> = compose(
@@ -122,22 +131,10 @@ const enhancer: HOC<*, {}> = compose(
     {
       // Relates to all the steps in a pattern (where are we in the song?)
       currentStep: 0,
-
-      sequences: [
-        {
-          id: Date.now(),
-          pattern: [],
-          numberOfSteps: 16,
-        },
-      ],
     },
     {
       // Step Position
       setCurrentStep: props => currentStep => ({ currentStep }),
-
-      // Sequences
-      addSequence: props => sequence => ({ sequences: props.sequences.concat(sequence) }),
-      removeSequence: props => () => ({ sequences: props.sequences.slice(1) }),
     },
   ),
   withHandlers({
@@ -168,9 +165,25 @@ const enhancer: HOC<*, {}> = compose(
     },
   }),
   withHandlers({
-    manageNextPosition: props => () => props.currentStep + 1 >= 16
-      ? props.setCurrentStep(0)
-      : props.setCurrentStep(props.currentStep + 1),
+    manageNextPosition: props => () => {
+
+      if (props.currentStep + 1 >= 16) {
+
+        if (props.playerMode === PLAYER_MODE.loop) {
+          return props.setCurrentStep(0)
+        }
+
+        if (props.currentSequence + 1 <= props.sequences.length) {
+          props.setCurrentSequence(props.currentSequence + 1)
+          props.setCurrentStep(0)
+        } else {
+          props.setCurrentSequence(0)
+        }
+
+      } else {
+        props.setCurrentStep(props.currentStep + 1)
+      }
+    }
   }),
   withHandlers({
     handlePlayer: props => () => {
@@ -180,20 +193,35 @@ const enhancer: HOC<*, {}> = compose(
         return props.pause()
       }
 
-      const tempo = 120
+      const tempo = props.bpm || 120
       const linesPerBeat = 4
       const interval = ((Math.pow(10, 4) * 6) / linesPerBeat) / tempo
 
       timerID = setInterval(() => props.manageNextPosition(), interval)
 
+      // store interval
+      props.setInterval(interval)
+
       return props.play()
     },
+    handleMode: props => () => props.playerMode === PLAYER_MODE.loop
+      ? props.setMode(PLAYER_MODE.continuous)
+      : props.setMode(PLAYER_MODE.loop),
   }),
   lifecycle({
     // If we want to load a bunch of default instruments! :-)
     componentWillMount() {
       this.props.addInstrumentHandler(tr909Minimal)
     },
+
+    // If bpm changes, clear and reset interval of timerID
+    componentWillUpdate(nextProps) {
+      if (this.props.bpm !== nextProps.bpm) {
+        clearInterval(timerID)
+
+        this.props.handlePlayer()
+      }
+    }
   })
 )
 

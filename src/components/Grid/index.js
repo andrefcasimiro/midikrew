@@ -2,7 +2,7 @@
 import React from 'react'
 import * as R from 'ramda'
 import { connect } from 'react-redux'
-import { compose, type HOC, withHandlers } from 'recompose'
+import { compose, type HOC, withHandlers, withStateHandlers } from 'recompose'
 import SamplePlayer from 'components/SamplePlayer'
 import INSTRUMENT_ACTIONS from 'data/instrument/actions'
 import { PLAYER_STATE } from 'data/track/reducer'
@@ -16,9 +16,8 @@ for (let i = 0; i < 16; i++) {
   generator.push(i)
 }
 
-let canPlay = true
-
 const Grid = ({
+  interval, // from redux track tree
   handleSelection,
   instruments, // from redux track tree
   instrumentOwner, // from parent component
@@ -27,6 +26,8 @@ const Grid = ({
   sample,
   audioContext, // from redux track tree
   playerState, // from redux track tree
+  canPlay, // from withStateHandlers
+  setCanPlay, // from withStateHandlers
 }) => {
   const instrument = instruments.find(i => i.id === instrumentOwner)
   const sequence = instrument.sequences && instrument.sequences[currentSequence]
@@ -40,13 +41,11 @@ const Grid = ({
 
         // Avoids an accidental retriggering caused by the nature of this component's lifecycle update
         if (trigger) {
-          canPlay = false
+          setCanPlay(false)
 
           setTimeout(() => {
-            console.log('canPlay? ', canPlay)
-            canPlay = true
-            console.log('canPlay? ', canPlay)
-          }, 100)
+            setCanPlay(true)
+          }, interval) // 200 will be defined by fianl interval value / number of notes
         }
         return (
           <Step active={active} key={index} index={index} onClick={() => handleSelection(index)}>
@@ -61,6 +60,7 @@ const Grid = ({
 const mapStateToProps = state => {
 
   return {
+    interval: state.track.interval,
     currentSequence: state.track.currentSequence,
     audioContext: state.track.audioContext,
     playerState: state.track.playerState,
@@ -74,6 +74,14 @@ const mapDispatchToProps = {
 
 const enhancer: HOC<*, {}> = compose(
   connect(mapStateToProps, mapDispatchToProps),
+  withStateHandlers(
+    {
+      canPlay: true,
+    },
+    {
+      setCanPlay: () => (v) => ({ canPlay: v }),
+    },
+  ),
   withHandlers({
     handleSelection: props => index => {
       const currentInstrument = props.instruments.find(instrument => instrument.id === props.instrumentOwner)

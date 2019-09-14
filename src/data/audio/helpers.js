@@ -1,4 +1,25 @@
 // @flow
+import { reduxStore } from '../../index'
+import INSTRUMENT_ACTIONS from 'data/instrument/actions'
+import type { Instrument } from 'data/instrument/types'
+
+export const loadPack = (pack: Instrument[]) => {
+  const audioContext = reduxStore.getState().track.audioContext
+
+  pack.forEach(instrument => {
+    loadSample(instrument.samplePath, audioContext, 1, 1, result => {
+      const _instrument = {
+        ...instrument,
+        sampleSource: result,
+      }
+
+      reduxStore.dispatch(
+        INSTRUMENT_ACTIONS.addInstrument(_instrument)
+      )
+    })
+  })
+}
+
 
 export const loadSample = async (
   url: string,

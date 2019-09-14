@@ -15,6 +15,12 @@ import {
   TiEdit as SaveProjectIcon,
   TiFolderOpen as LoadProjectIcon,
 } from 'react-icons/ti'
+import {
+  junglePads,
+} from 'data/audio/junglePads'
+import {
+  loadPack,
+} from 'data/audio/helpers'
 
 const Li = styled.li`
   cursor: pointer;
@@ -121,6 +127,16 @@ const instrumentsMenu = {
             onClick: () => console.log('teste'),
           },
         ]} />,
+      },
+      {
+        name: 'Pads',
+        icon: InstrumentIcon,
+        component: () => <Menu options={[
+          {
+            name: 'Jungle Pads',
+            onClick: () => loadPack(junglePads),
+          },
+        ]}/>
       },
       {
         name: 'Bass',
