@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import { compose, type HOC, withStateHandlers, withHandlers, lifecycle } from 'recompose'
+import { compose, type HOC, withHandlers, lifecycle } from 'recompose'
 import { connect } from 'react-redux'
 import {
   GoDiffAdded as PlusIcon,
@@ -74,7 +74,7 @@ const SequenceManager = ({
         <Wrapper>
           <Column>
             <Instrument blank/>
-            <GridWrapper blank><CurrentStep currentStep={currentStep} /></GridWrapper>
+            <GridWrapper blank><CurrentStep /></GridWrapper>
           </Column>
 
           {instruments.map((instrument, index) =>
@@ -85,7 +85,6 @@ const SequenceManager = ({
               <GridWrapper>
                 <InstrumentGrid
                   instrumentOwner={instrument.id}
-                  currentStep={currentStep}
                   sample={instrument.sampleSource}
                 />
               </GridWrapper>
@@ -101,6 +100,7 @@ const mapStateToProps = state => ({
   bpm: state.track.bpm,
   playerState: state.track.playerState,
   playerMode: state.track.playerMode,
+  currentStep: state.track.currentStep,
   currentSequence: state.track.currentSequence,
   sequences: state.track.sequences,
   instruments: state.instrument.instruments,
@@ -111,6 +111,7 @@ const mapDispatchToProps = {
   removeInstrument: INSTRUMENT_ACTIONS.removeInstrument,
   setInterval: TRACK_ACTIONS.setInterval,
   addSequence: TRACK_ACTIONS.addSequence,
+  setCurrentStep: TRACK_ACTIONS.setCurrentStep,
   setCurrentSequence: TRACK_ACTIONS.setCurrentSequence,
   removeSequence: TRACK_ACTIONS.removeSequence,
   play: TRACK_ACTIONS.play,
@@ -120,16 +121,6 @@ const mapDispatchToProps = {
 
 const enhancer: HOC<*, {}> = compose(
   connect(mapStateToProps, mapDispatchToProps),
-  withStateHandlers(
-    {
-      // Relates to all the steps in a pattern (where are we in the song?)
-      currentStep: 0,
-    },
-    {
-      // Step Position
-      setCurrentStep: props => currentStep => ({ currentStep }),
-    },
-  ),
   withHandlers({
     manageNextPosition: props => () => {
       if (props.currentStep + 1 >= 16) {

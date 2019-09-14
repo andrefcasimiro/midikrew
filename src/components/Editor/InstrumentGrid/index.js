@@ -12,7 +12,6 @@ for (let i = 0; i < 16; i++) {
 const InstrumentGrid = ({
   instruments, // from redux
   instrumentOwner,
-  currentStep,
 }) => {
   const instrument = instruments.find(i => i.id === instrumentOwner)
 
@@ -26,7 +25,6 @@ const InstrumentGrid = ({
             key={stepIndex}
             index={stepIndex}
             instrument={instrument}
-            currentStep={currentStep}
           />
         )
       })}
@@ -36,11 +34,9 @@ const InstrumentGrid = ({
 
 type Props = {
   instrumentOwner: number,
-  currentStep: number,
 }
 
 const mapStateToProps = state => ({
-  currentSequence: state.track.currentSequence,
   instruments: state.instrument.instruments,
 })
 

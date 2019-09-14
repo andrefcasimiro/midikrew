@@ -13,7 +13,7 @@ type Props = {
 //  audioContext: AudioContext,
 //  handleSelection: Function, // The handler for when we select / unselect this step
   instrument: Instrument, // The instrument this step belongs to
-  currentStep: number,
+  // currentStep: number, // comes from redux
 //  interval: number, // Comes from redux
 //  playerState: string, // Comes from redux
 }
@@ -65,6 +65,7 @@ const InstrumentStep = ({
 
 const mapStateToProps = state => ({
   interval: state.track.interval,
+  currentStep: state.track.currentStep,
   currentSequence: state.track.currentSequence,
   audioContext: state.track.audioContext,
   playerState: state.track.playerState,
