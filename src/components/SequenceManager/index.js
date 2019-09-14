@@ -166,18 +166,19 @@ const enhancer: HOC<*, {}> = compose(
   }),
   withHandlers({
     manageNextPosition: props => () => {
-
       if (props.currentStep + 1 >= 16) {
-
         if (props.playerMode === PLAYER_MODE.loop) {
           return props.setCurrentStep(0)
         }
 
-        if (props.currentSequence + 1 <= props.sequences.length) {
+        console.log(props.currentSequence + 1, props.sequences.length)
+
+        if (props.currentSequence +2 <= props.sequences.length) {
           props.setCurrentSequence(props.currentSequence + 1)
           props.setCurrentStep(0)
         } else {
           props.setCurrentSequence(0)
+          props.setCurrentStep(0)
         }
 
       } else {

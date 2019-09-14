@@ -43,10 +43,9 @@ const Grid = ({
         if (trigger) {
           setCanPlay(false)
 
-          setTimeout(() => {
-            setCanPlay(true)
-          }, interval) // 200 will be defined by fianl interval value / number of notes
+          setTimeout(() => { setCanPlay(true) }, interval)
         }
+
         return (
           <Step active={active} key={index} index={index} onClick={() => handleSelection(index)}>
             <SamplePlayer sample={sample} trigger={trigger} audioContext={audioContext} />
@@ -57,16 +56,13 @@ const Grid = ({
   )
 }
 
-const mapStateToProps = state => {
-
-  return {
-    interval: state.track.interval,
-    currentSequence: state.track.currentSequence,
-    audioContext: state.track.audioContext,
-    playerState: state.track.playerState,
-    instruments: state.instrument.instruments,
-  }
-}
+const mapStateToProps = state => ({
+  interval: state.track.interval,
+  currentSequence: state.track.currentSequence,
+  audioContext: state.track.audioContext,
+  playerState: state.track.playerState,
+  instruments: state.instrument.instruments,
+})
 
 const mapDispatchToProps = {
   updateSequence: INSTRUMENT_ACTIONS.updateSequence,

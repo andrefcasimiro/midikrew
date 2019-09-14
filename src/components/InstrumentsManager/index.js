@@ -22,7 +22,6 @@ const generator = (): Instrument => ({
 })
 
 const InstrumentsManager = ({ addInstrument, removeInstrument }) => {
-
   return (
     <Menu>
       <IconButton>
