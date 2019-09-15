@@ -133,6 +133,12 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
         instruments
       }
     }
+    case ACTIONS.Types.CLEAR_ALL: {
+      return {
+        ...state,
+        instruments: [],
+      }
+    }
     default:
       return state
   }
