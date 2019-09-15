@@ -24,6 +24,9 @@ export const Option = styled.div`
     margin: 1rem;
     cursor: pointer;
 
+    width: 3rem;
+    height: 3rem;
+
     &:hover {
       color: ${theme.colors.monicastro.blue};
     }

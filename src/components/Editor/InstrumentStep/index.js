@@ -11,35 +11,22 @@ import StepOptions from './StepOptions'
 import {
   TiCogOutline as GearIcon,
 } from 'react-icons/ti'
-import { IconContext } from "react-icons";
+import { IconContext } from "react-icons"
 import { ActionWrapper, StepWrapper, OptionWrapper } from './styled'
 import Modal from 'modals/_Modal'
-import { Field } from 'componentsStyled/Typography'
 import {
   loadSample
 } from 'data/audio/helpers'
 import convolver from 'assets/samples/convolver.wav'
 import { reduxStore } from '../../../index'
 
-var convolverBuffer
-setTimeout(
-  () => {
-    loadSample(convolver, reduxStore.getState().track.audioContext, 1, 1, res => { 
-      convolverBuffer = res 
-      console.log('convolverBuffer: ', convolverBuffer)
-
-    })
-
-
-  }
-  , 1000
-)
-
-
 type Props = {
   index: number,
   instrument: Instrument,
 }
+
+// Global used as the reverb signal
+let convolverBuffer
 
 /**
  *
@@ -53,23 +40,19 @@ const play = (
   fxChain,
 ) => {
   var source = audioContext.createBufferSource(); // creates a sound source
-
   source.buffer = sampleSource
 
   // Pitch
   source.playbackRate.value = (fxChain && fxChain.pitch) || 1
 
-  if (fxChain && fxChain.reverb && fxChain.reverb > 1) {
-    console.log('add reverb')
+  if (fxChain && fxChain.reverb && fxChain.reverb === true) {
     var convolver = audioContext.createConvolver();
     convolver.buffer = convolverBuffer
     convolver.connect(audioContext.destination)
     source.connect(convolver)
-
   }
 
   source.connect(audioContext.destination)
-
   source.start(0)
 }
 
@@ -114,7 +97,7 @@ const InstrumentStep = ({
           </IconContext.Provider>
           {isOpen &&
             <Modal title='Edit FX' close={toggleOpen}>
-              <StepOptions increaseValue={increaseFX} decreaseValue={decreaseFX} />
+              <StepOptions increaseValue={increaseFX} decreaseValue={decreaseFX} fx={fx[currentSequence]} />
             </Modal>
           }
         </OptionWrapper>
@@ -152,7 +135,9 @@ const enhancer: HOC<*, Props> = compose(
   withHandlers({
     increaseFX: props => key => {
       const newFx = props.fx.slice()
-      const propValue = ((newFx[props.currentSequence] && newFx[props.currentSequence][key]) || 1) + 0.05
+      const propValue = key === 'reverb' // hardcode for now
+        ? true
+        : ((newFx[props.currentSequence] && newFx[props.currentSequence][key]) || 1) + 0.05
 
       newFx[props.currentSequence] = {
         ...newFx[props.currentSequence],
@@ -162,7 +147,9 @@ const enhancer: HOC<*, Props> = compose(
     },
     decreaseFX: props => key => {
       const newFx = props.fx.slice()
-      const propValue = ((newFx[props.currentSequence] && newFx[props.currentSequence][key]) || 1) - 0.05
+      const propValue = key === 'reverb' // hardcode for now
+        ? false
+        : ((newFx[props.currentSequence] && newFx[props.currentSequence][key]) || 1) - 0.05
 
       newFx[props.currentSequence] = {
         ...newFx[props.currentSequence],
@@ -200,6 +187,12 @@ const enhancer: HOC<*, Props> = compose(
     }
   }),
   lifecycle({
+    componentDidMount() {
+      // Load convolver signal
+      loadSample(convolver, reduxStore.getState().track.audioContext, 1, 1, res => {
+        convolverBuffer = res
+      })
+    },
     shouldComponentUpdate(nextProps) {
       if (
         (!this.props.selected && !nextProps.selected)
