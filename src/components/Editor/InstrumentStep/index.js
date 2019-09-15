@@ -9,14 +9,15 @@ import type { Instrument } from 'data/instrument/types'
 import { PLAYER_STATE } from 'data/track/reducer'
 import StepOptions from './StepOptions'
 import {
-  TiCogOutline as GearIcon,
-} from 'react-icons/ti'
+  IoMdColorWand as GearIcon,
+} from 'react-icons/io'
 import { IconContext } from "react-icons"
 import { ActionWrapper, StepWrapper, OptionWrapper } from './styled'
 import Modal from 'modals/_Modal'
 import {
   loadSample
 } from 'data/audio/helpers'
+// $Ignore
 import convolver from 'assets/samples/convolver.wav'
 import { reduxStore } from '../../../index'
 
@@ -29,7 +30,6 @@ type Props = {
 let convolverBuffer
 
 /**
- *
  * @param {AudioBuffer} sampleSource - The base sample source
  * @param {AudioContext} audioContext - The audio context instance
  * @param {Object} fxChain - The fx to apply to the sample source
@@ -91,11 +91,13 @@ const InstrumentStep = ({
     setTimeout(() => { setCanPlay(true) }, interval)
   }
 
+  const fxObj = fx ? fx[currentSequence] : {}
+
   return (
     <ActionWrapper>
       <StepWrapper selected={selected} key={index} index={index} onClick={() => handleSelection(index)} />
         {trigger
-          ? play(instrument.sampleSource, audioContext, fx[currentSequence])
+          ? play(instrument.sampleSource, audioContext, fxObj)
           : null
         }
       {selected &&
@@ -105,7 +107,7 @@ const InstrumentStep = ({
           </IconContext.Provider>
           {isOpen &&
             <Modal title='Edit FX' close={toggleOpen}>
-              <StepOptions increaseValue={increaseFX} decreaseValue={decreaseFX} fx={fx[currentSequence]} />
+              <StepOptions increaseValue={increaseFX} decreaseValue={decreaseFX} fx={fxObj} />
             </Modal>
           }
         </OptionWrapper>
@@ -125,24 +127,30 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   updateSequence: INSTRUMENT_ACTIONS.updateSequence,
+  updateSequenceFX: INSTRUMENT_ACTIONS.updateSequenceFX,
 }
 
 const enhancer: HOC<*, Props> = compose(
   withOpen,
   connect(mapStateToProps, mapDispatchToProps),
+  withProps(props => {
+    const fx = props.instrument.sequences[props.currentSequence] && props.instrument.sequences[props.currentSequence].fx
+
+    return {
+      fx
+    }
+  }),
   withStateHandlers(
     {
       canPlay: true,
-      fx: [],
     },
     {
       setCanPlay: () => (v) => ({ canPlay: v }),
-      setFX: () => (fx) => ({ fx }),
     },
   ),
   withHandlers({
     increaseFX: props => key => {
-      const newFx = props.fx.slice()
+      const newFx = props.fx ? props.fx.slice() : []
       const propValue = key === 'reverb' // hardcode for now
         ? true
         : ((newFx[props.currentSequence] && newFx[props.currentSequence][key]) || 1) + 0.05
@@ -151,10 +159,15 @@ const enhancer: HOC<*, Props> = compose(
         ...newFx[props.currentSequence],
         [key]: propValue
       }
-      props.setFX(newFx)
+
+      props.updateSequenceFX({
+        sequenceFX: newFx,
+        sequenceID: props.currentSequence,
+        instrumentID: props.instrument.id,
+      })
     },
     decreaseFX: props => key => {
-      const newFx = props.fx.slice()
+      const newFx = props.fx ? props.fx.slice() : []
       const propValue = key === 'reverb' // hardcode for now
         ? false
         : ((newFx[props.currentSequence] && newFx[props.currentSequence][key]) || 1) - 0.05
@@ -163,8 +176,12 @@ const enhancer: HOC<*, Props> = compose(
         ...newFx[props.currentSequence],
         [key]: propValue
       }
-      props.setFX(newFx)
 
+      props.updateSequenceFX({
+        sequenceFX: newFx,
+        sequenceID: props.currentSequence,
+        instrumentID: props.instrument.id,
+      })
     },
     handleSelection: props => index => {
       let sequence = R.path(['sequences', props.currentSequence], props.instrument)
@@ -202,13 +219,9 @@ const enhancer: HOC<*, Props> = compose(
       })
     },
     shouldComponentUpdate(nextProps) {
-      if (
-        (!this.props.selected && !nextProps.selected)
-      ) {
-        return false
-      }
-
-      return true
+      return !this.props.selected && !nextProps.selected
+        ? false
+        : true
     }
   })
 )

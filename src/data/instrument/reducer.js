@@ -66,6 +66,25 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
         instruments,
       }
     }
+    case ACTIONS.Types.UPDATE_SEQUENCE_FX: {
+      const instrumentID = action.payload.instrumentID //
+      const sequenceID = action.payload.sequenceID //
+      const sequenceFX = action.payload.sequenceFX
+
+      // $Ignore
+      const instruments = state.instruments.slice() // Always slice the state!
+      const instrumentToUpdate = instruments.find(instrument => instrument.id === instrumentID)
+
+      if (instrumentToUpdate) {
+        instrumentToUpdate.sequences[sequenceID].fx = sequenceFX
+        instruments[instruments.indexOf(instrumentToUpdate)] = instrumentToUpdate
+      }
+
+      return {
+        ...state,
+        instruments,
+      }
+    }
     default:
       return state
   }

@@ -5,5 +5,11 @@ export type Instrument = {
   name: string,
   samplePath: string,
   sampleSource: ?AudioBuffer,
-  sequences: Array<Array<number>>,
+  sequences: Array<Array<{
+    fx?: {
+      pitch?: number,
+      volume?: number,
+      reverb?: boolean,
+    },
+  }>>,
 }

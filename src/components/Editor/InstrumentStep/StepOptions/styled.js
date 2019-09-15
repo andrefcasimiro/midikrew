@@ -1,7 +1,6 @@
 // @flow
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import theme from 'global/theme'
-import { mq } from 'common/mediaQueries'
 
 export const Wrapper = styled.div`
   display: flex;

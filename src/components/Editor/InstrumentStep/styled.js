@@ -8,15 +8,36 @@ export const ActionWrapper = styled.div`
   flex-direction: row;
   flex-grow: 1;
   height: 100%;
+  width: auto;
+  position: relative;
 `
 
 export const OptionWrapper = styled.div`
-  display: flex;
-  height: 2rem;
-  width: 2rem;
   position: absolute;
-  justify-content: center;
-  align-items: center;
+  right: 0;
+  padding-top: 0;
+  background: ${theme.colors.monicastro.dark};
+
+  display: flex;
+  width: auto;
+  height: 40%;
+  flex-direction: column;
+
+  ${mq('max').phoneWide} {
+    width: 100%;
+  }
+
+  ${mq('min').tabletWide} {
+    width: 20%;
+    padding-top: 0.2rem;
+    height: 100%;
+    opacity: 0;
+    transition: 0.2s opacity ease;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 `
 
 export const StepWrapper = styled.div`

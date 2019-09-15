@@ -2,8 +2,13 @@
 import React from 'react'
 import { compose, type HOC, withHandlers } from 'recompose'
 import { connect } from 'react-redux'
+import { IconButton } from 'componentsStyled/Buttons'
 import TRACK_ACTIONS from 'data/track/actions'
 import { Field } from 'componentsStyled/Typography'
+import {
+  MdContentCopy as CopyIcon,
+  MdContentPaste as PasteIcon,
+} from 'react-icons/md'
 import {
   Menu,
   Input,
@@ -17,6 +22,11 @@ import {
 
 const SongSettings = ({ bpm, handleBPM }) => (
   <Menu>
+    <IconButton><CopyIcon /></IconButton>
+    <IconButton><PasteIcon /></IconButton>
+
+    &nbsp;
+
     <Field>BPM: </Field>
     <Input title='Set the current tempo of the song' type='number' value={bpm} onChange={handleBPM} />
   </Menu>
