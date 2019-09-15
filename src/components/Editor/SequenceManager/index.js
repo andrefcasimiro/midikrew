@@ -129,11 +129,11 @@ const enhancer: HOC<*, {}> = compose(
         }
 
         if (props.currentSequence + 2 <= props.sequences.length) {
+          props.setCurrentStep(0)
           props.setCurrentSequence(props.currentSequence + 1)
-          props.setCurrentStep(0)
         } else {
-          props.setCurrentSequence(0)
           props.setCurrentStep(0)
+          props.setCurrentSequence(0)
         }
 
       } else {

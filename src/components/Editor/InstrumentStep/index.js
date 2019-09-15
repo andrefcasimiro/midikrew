@@ -85,9 +85,6 @@ const InstrumentStep = ({
 }) => {
   let trigger = canPlay && playerState === PLAYER_STATE.playing && index === currentStep && selected
   
-  if (trigger) {
-    if (transition && index === 15) trigger = false
-  }
 
   // Avoids an accidental retriggering caused by the nature of this component's lifecycle update
   if (trigger) {
@@ -229,14 +226,6 @@ const enhancer: HOC<*, Props> = compose(
         ? false
         : true
     },
-    componentWillReceiveProps(nextProps) {
-      // HACK. Find a better solution for this bug!
-      if (this.props.currentSequence !== nextProps.currentSequence) {
-        transition = true
-
-        setTimeout(() => { transition = false }, 100)
-      }
-    }
   })
 )
 
