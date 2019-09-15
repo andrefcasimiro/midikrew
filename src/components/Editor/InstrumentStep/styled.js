@@ -15,7 +15,6 @@ export const OptionWrapper = styled.div`
   height: 2rem;
   width: 2rem;
   position: absolute;
-  z-index: 10;
   justify-content: center;
   align-items: center;
 `

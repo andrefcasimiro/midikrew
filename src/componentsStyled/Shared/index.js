@@ -49,8 +49,6 @@ export const TitleSection = styled(BoxSection)`
   min-height: auto;
   background: none;
   color: ${theme.colors.themes.common.white};
-  border-bottom: 0.2rem solid rgba(255, 255, 255, 0.3);
-  box-shadow: none;
 `
 
 export const Ul = styled.ul`

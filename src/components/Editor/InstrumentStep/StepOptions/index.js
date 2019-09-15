@@ -42,8 +42,6 @@ const StepOptions = ({ increaseValue, decreaseValue, fx }: Props) => {
     },
   ]
 
-  console.log('fx: ', fx)
-
   return (
     <Wrapper>
       {tabs.map((tab, index) =>

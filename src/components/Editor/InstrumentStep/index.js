@@ -52,6 +52,14 @@ const play = (
     source.connect(convolver)
   }
 
+  if (fxChain && fxChain.volume) {
+    // Volume
+    var gainNode = audioContext.createGain()
+    gainNode.gain.value = fxChain.volume
+    gainNode.connect(audioContext.destination)
+    source.connect(gainNode)
+  }
+
   source.connect(audioContext.destination)
   source.start(0)
 }
