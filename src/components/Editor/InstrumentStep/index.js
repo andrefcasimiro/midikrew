@@ -77,8 +77,7 @@ const InstrumentStep = ({
   playerState,
   selected,
   fx,
-  increaseFX,
-  decreaseFX,
+  setFX,
   toggleOpen,
   isOpen,
 }) => {
@@ -91,7 +90,7 @@ const InstrumentStep = ({
     setTimeout(() => { setCanPlay(true) }, interval)
   }
 
-  const fxObj = fx ? fx[currentSequence] : {}
+  const fxObj = fx || {}
 
   return (
     <ActionWrapper>
@@ -107,7 +106,7 @@ const InstrumentStep = ({
           </IconContext.Provider>
           {isOpen &&
             <Modal title='Edit FX' close={toggleOpen}>
-              <StepOptions increaseValue={increaseFX} decreaseValue={decreaseFX} fx={fxObj} />
+              <StepOptions setFx={setFX} fx={fxObj} />
             </Modal>
           }
         </OptionWrapper>
@@ -127,14 +126,18 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   updateSequence: INSTRUMENT_ACTIONS.updateSequence,
-  updateSequenceFX: INSTRUMENT_ACTIONS.updateSequenceFX,
 }
 
 const enhancer: HOC<*, Props> = compose(
   withOpen,
   connect(mapStateToProps, mapDispatchToProps),
   withProps(props => {
-    const fx = props.instrument.sequences[props.currentSequence] && props.instrument.sequences[props.currentSequence].fx
+    const instrumentSequences = props.instrument.sequences[props.currentSequence]
+
+    // Find corresponding FX for this step
+    const match = instrumentSequences && instrumentSequences.find(entry => entry.index === props.index)
+
+    const fx = (match && match.fx) ? match.fx : {}
 
     return {
       fx
@@ -149,50 +152,46 @@ const enhancer: HOC<*, Props> = compose(
     },
   ),
   withHandlers({
-    increaseFX: props => key => {
-      const newFx = props.fx ? props.fx.slice() : []
-      const propValue = key === 'reverb' // hardcode for now
-        ? true
-        : ((newFx[props.currentSequence] && newFx[props.currentSequence][key]) || 1) + 0.05
+    setFX: props => (key, type: 'increase' | 'decrease') => {
+      let fx = props.fx || {}
 
-      newFx[props.currentSequence] = {
-        ...newFx[props.currentSequence],
-        [key]: propValue
+      const propValue = key === 'reverb' // hardcode for now
+        ? type === 'decrease' ? true : false
+        : (type === 'increase' ? (fx[key] || 1) + 0.05 : (fx[key] || 1) - 0.05)
+
+      // Update sequence
+
+      fx = {
+        ...fx,
+        [key]: propValue,
       }
 
-      props.updateSequenceFX({
-        sequenceFX: newFx,
-        sequenceID: props.currentSequence,
-        instrumentID: props.instrument.id,
-      })
-    },
-    decreaseFX: props => key => {
-      const newFx = props.fx ? props.fx.slice() : []
-      const propValue = key === 'reverb' // hardcode for now
-        ? false
-        : ((newFx[props.currentSequence] && newFx[props.currentSequence][key]) || 1) - 0.05
-
-      newFx[props.currentSequence] = {
-        ...newFx[props.currentSequence],
-        [key]: propValue
-      }
-
-      props.updateSequenceFX({
-        sequenceFX: newFx,
-        sequenceID: props.currentSequence,
-        instrumentID: props.instrument.id,
-      })
-    },
-    handleSelection: props => index => {
       let sequence = R.path(['sequences', props.currentSequence], props.instrument)
         ? props.instrument.sequences[props.currentSequence].slice()
         : []
 
-      if (sequence.includes(index)) { // REMOVE
-        const entry = sequence.indexOf(index)
-        sequence.splice(entry, 1)
+      let targetIndex = sequence.findIndex(seq => seq.index === props.index)
+      sequence[targetIndex].fx = fx
+
+      props.updateSequence({
+        sequence,
+        sequenceID: props.currentSequence,
+        instrumentID: props.instrument.id,
+      })
+    },
+    handleSelection: props => (index) => {
+      let sequence = R.path(['sequences', props.currentSequence], props.instrument)
+        ? props.instrument.sequences[props.currentSequence].slice()
+        : []
+
+      const sequenceIndex = sequence.findIndex(seq => seq.index === index)
+
+      if (sequenceIndex >= 0) { // REMOVE
+        sequence.splice(sequenceIndex, 1)
       } else { // ADD
-        sequence = sequence.concat(index)
+        sequence = sequence.concat({
+          index
+        })
       }
 
       props.updateSequence({
@@ -203,9 +202,10 @@ const enhancer: HOC<*, Props> = compose(
     },
   }),
   withProps(props => {
-    const instrumentSequence = props.instrument.sequences && props.instrument.sequences[props.currentSequence]
+    const instrumentSequence = props.instrument.sequences
+      && props.instrument.sequences[props.currentSequence]
 
-    const selected = instrumentSequence && instrumentSequence.includes(props.index)
+    const selected = instrumentSequence && instrumentSequence.find(seq => seq.index === props.index)
 
     return {
       selected,

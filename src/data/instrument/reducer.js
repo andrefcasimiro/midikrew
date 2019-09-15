@@ -4,10 +4,19 @@ import type { Instrument } from './types'
 
 type State = {
   instruments: Array<Instrument>,
+  copyBuffer: Array<Array<{
+    index: number,
+    fx: {
+      pitch?: number,
+      volume?: number,
+      reverb?: boolean,
+    }
+  }>>,
 }
 
 const defaultState: State = {
   instruments: [],
+  copyBuffer: [],
 }
 
 const instrumentReducer = (state: typeof defaultState = defaultState, action: { type: string, payload: any }) => {
@@ -58,6 +67,7 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
 
       if (instrumentToUpdate) {
         instrumentToUpdate.sequences[sequenceID] = sequence
+
         instruments[instruments.indexOf(instrumentToUpdate)] = instrumentToUpdate
       }
 
@@ -66,23 +76,52 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
         instruments,
       }
     }
-    case ACTIONS.Types.UPDATE_SEQUENCE_FX: {
-      const instrumentID = action.payload.instrumentID //
-      const sequenceID = action.payload.sequenceID //
-      const sequenceFX = action.payload.sequenceFX
+    // EDITOR
+    case ACTIONS.Types.COPY_SEQUENCE: {
+      const targetSequence = action.payload
+      const instruments = state.instruments.slice()
 
-      // $Ignore
-      const instruments = state.instruments.slice() // Always slice the state!
-      const instrumentToUpdate = instruments.find(instrument => instrument.id === instrumentID)
+      let copied = []
 
-      if (instrumentToUpdate) {
-        instrumentToUpdate.sequences[sequenceID].fx = sequenceFX
-        instruments[instruments.indexOf(instrumentToUpdate)] = instrumentToUpdate
-      }
+      instruments.forEach((instrument, index) => {
+        if (instrument.sequences[targetSequence]) {
+
+          copied.push(instrument.sequences[targetSequence])
+
+          console.log('copied: ', copied)
+
+        }
+      })
 
       return {
         ...state,
-        instruments,
+        copyBuffer: copied,
+      }
+    }
+    case ACTIONS.Types.PASTE_SEQUENCE: {
+      const targetSequence = action.payload
+
+      // $Ignore
+      const instruments = state.instruments.slice()
+
+      instruments.forEach((instrument, index) => {
+
+        const match = state.copyBuffer[index]
+        
+        if (match && match.sequences && match.sequences.length) {
+          console.log(match.sequences[targetSequence])
+        }
+
+        console.log('state.copyBuffer[index]: ', state.copyBuffer[index])
+
+        //instrument.sequences[targetSequence] = state.copyBuffer[index].sequences[targetSequence]
+
+      })
+
+
+      return {
+        ...state,
+        instruments
       }
     }
     default:

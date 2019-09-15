@@ -3,6 +3,7 @@ import React from 'react'
 import { compose, type HOC, withHandlers } from 'recompose'
 import { connect } from 'react-redux'
 import { IconButton } from 'componentsStyled/Buttons'
+import INSTRUMENT_ACTIONS from 'data/instrument/actions'
 import TRACK_ACTIONS from 'data/track/actions'
 import { Field } from 'componentsStyled/Typography'
 import {
@@ -20,10 +21,10 @@ import {
  * @param {Function} setBPM - The dispatcher to update the bpm value in our redux store
  */
 
-const SongSettings = ({ bpm, handleBPM }) => (
+const SongSettings = ({ bpm, handleBPM, currentSequence, copySequence, pasteSequence }) => (
   <Menu>
-    <IconButton><CopyIcon /></IconButton>
-    <IconButton><PasteIcon /></IconButton>
+    <IconButton onClick={() => copySequence(currentSequence)}><CopyIcon /></IconButton>
+    <IconButton onClick={() => pasteSequence(currentSequence)}><PasteIcon /></IconButton>
 
     &nbsp;
 
@@ -34,10 +35,13 @@ const SongSettings = ({ bpm, handleBPM }) => (
 
 const mapStateToProps = state => ({
   bpm: state.track.bpm,
+  currentSequence: state.track.currentSequence,
 })
 
 const mapDispatchToProps = {
   setBPM: TRACK_ACTIONS.setCurrentBPM,
+  copySequence: INSTRUMENT_ACTIONS.copySequence,
+  pasteSequence: INSTRUMENT_ACTIONS.pasteSequence,
 }
 
 const enhancer: HOC<*, {}> = compose(

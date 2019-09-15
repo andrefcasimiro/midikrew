@@ -7,7 +7,8 @@ const Types = {
   REMOVE_INSTRUMENT: "REMOVE_INSTRUMENT",
   UPDATE_INSTRUMENT_SAMPLE: "UPDATE_INSTRUMENT_SAMPLE",
   UPDATE_SEQUENCE: "UPDATE_SEQUENCE",
-  UPDATE_SEQUENCE_FX: "UPDATE_SEQUENCE_FX",
+  COPY_SEQUENCE: "COPY_SEQUENCE",
+  PASTE_SEQUENCE: "PASTE_SEQUENCE",
 }
 
 // actions
@@ -32,17 +33,14 @@ const updateSequence = (payload: { sequence: Array<number>, sequenceID: number, 
   payload,
 })
 
-const updateSequenceFX = (payload: {
-  sequenceFX: {
-    volume?: number,
-    pitch?: number,
-    reverb?: boolean,
-  },
-  sequenceID: number,
-  instrumentID: number,
-}) => ({
-  type: Types.UPDATE_SEQUENCE_FX,
-  payload,
+const copySequence = (targetSequence: number) => ({
+  type: Types.COPY_SEQUENCE,
+  payload: targetSequence,
+})
+
+const pasteSequence = (targetSequence: number) => ({
+  type: Types.PASTE_SEQUENCE,
+  payload: targetSequence,
 })
 
 export default {
@@ -50,6 +48,7 @@ export default {
   removeInstrument,
   updateInstrumentSample,
   updateSequence,
-  updateSequenceFX,
+  copySequence,
+  pasteSequence,
   Types,
 }

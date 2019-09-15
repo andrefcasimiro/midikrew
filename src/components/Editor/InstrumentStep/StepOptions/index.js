@@ -12,8 +12,7 @@ import {
 import { Option, Wrapper } from './styled'
 
 type Props = {
-  increaseValue: (key: string) => mixed,
-  decreaseValue: (key: string) => mixed,
+  setFx: (key: string, type: 'increase' | 'decrease') => mixed,
   fx: {
     volume?: number,
     pitch?: number,
@@ -21,9 +20,7 @@ type Props = {
   },
 }
 
-
-
-const StepOptions = ({ increaseValue, decreaseValue, fx }: Props) => {
+const StepOptions = ({ setFx, fx }: Props) => {
   const tabs = [
     {
       name: 'Volume',
@@ -42,23 +39,24 @@ const StepOptions = ({ increaseValue, decreaseValue, fx }: Props) => {
     },
   ]
 
+  console.log('fx: ', fx)
   return (
     <Wrapper>
       {tabs.map((tab, index) =>
         <Option key={index}>
           {tab.type === 'boolean'
             ? <>
-                {fx && fx[tab.key] && fx[tab.key] === true
-                  ? <CheckedIcon onClick={() => decreaseValue(tabs[index].key)}/>
-                  : <UncheckedIcon onClick={() => increaseValue(tabs[index].key)}/>
+                {fx[tab.key] === true
+                  ? <CheckedIcon onClick={() => setFx(tabs[index].key, 'increase')}/>
+                  : <UncheckedIcon onClick={() => setFx(tabs[index].key, 'decrease')}/>
                 }
                 <Field>{tabs[index].name}</Field>
               </>
             : <>
-                <UpIcon onClick={() => increaseValue(tabs[index].key)}/>
+                <UpIcon onClick={() => setFx(tabs[index].key, 'increase')}/>
                   <Field>{tabs[index].name}</Field>
                   <Text>{fx && fx[tab.key] && (fx[tab.key]).toFixed(2)}</Text>
-                <DownIcon onClick={() => decreaseValue(tabs[index].key)}/>
+                <DownIcon onClick={() => setFx(tabs[index].key, 'decrease')}/>
               </>
           }
 
