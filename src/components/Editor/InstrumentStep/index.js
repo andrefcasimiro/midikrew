@@ -8,9 +8,33 @@ import INSTRUMENT_ACTIONS from 'data/instrument/actions'
 import type { Instrument } from 'data/instrument/types'
 import { PLAYER_STATE } from 'data/track/reducer'
 import StepOptions from './StepOptions'
-import { StepWrapper, Selected } from './styled'
+import {
+  TiCogOutline as GearIcon,
+} from 'react-icons/ti'
+import { IconContext } from "react-icons";
+import { ActionWrapper, StepWrapper, OptionWrapper } from './styled'
 import Modal from 'modals/_Modal'
 import { Field } from 'componentsStyled/Typography'
+import {
+  loadSample
+} from 'data/audio/helpers'
+import convolver from 'assets/samples/convolver.wav'
+import { reduxStore } from '../../../index'
+
+var convolverBuffer
+setTimeout(
+  () => {
+    loadSample(convolver, reduxStore.getState().track.audioContext, 1, 1, res => { 
+      convolverBuffer = res 
+      console.log('convolverBuffer: ', convolverBuffer)
+
+    })
+
+
+  }
+  , 1000
+)
+
 
 type Props = {
   index: number,
@@ -26,18 +50,23 @@ type Props = {
 const play = (
   sampleSource,
   audioContext,
-  fxChain = {
-    pitch: 1,
-    volume: 1,
-    reverb: 1,
-  },
+  fxChain,
 ) => {
   var source = audioContext.createBufferSource(); // creates a sound source
 
   source.buffer = sampleSource
 
   // Pitch
-  source.playbackRate.value = fxChain.pitch
+  source.playbackRate.value = (fxChain && fxChain.pitch) || 1
+
+  if (fxChain && fxChain.reverb && fxChain.reverb > 1) {
+    console.log('add reverb')
+    var convolver = audioContext.createConvolver();
+    convolver.buffer = convolverBuffer
+    convolver.connect(audioContext.destination)
+    source.connect(convolver)
+
+  }
 
   source.connect(audioContext.destination)
 
@@ -50,6 +79,7 @@ const InstrumentStep = ({
   handleSelection,
   instrument,
   currentStep,
+  currentSequence,
   canPlay,
   setCanPlay,
   interval,
@@ -71,27 +101,25 @@ const InstrumentStep = ({
   }
 
   return (
-    <React.Fragment>
-      {selected &&
-
-        <>
-        <Field onClick={toggleOpen}>Open</Field>
-        {isOpen &&
-          <Modal title='Edit FX' close={toggleOpen}>
-            <StepOptions increaseValue={increaseFX} decreaseValue={decreaseFX} />
-          </Modal>
-        }
-        </>
-      }
-      <StepWrapper key={index} index={index} onClick={() => handleSelection(index)}>
-        {selected && <Selected />
-        }
+    <ActionWrapper>
+      <StepWrapper selected={selected} key={index} index={index} onClick={() => handleSelection(index)} />
         {trigger
-          ? play(instrument.sampleSource, audioContext, fx)
+          ? play(instrument.sampleSource, audioContext, fx[currentSequence])
           : null
         }
-      </StepWrapper>
-    </React.Fragment>
+      {selected &&
+        <OptionWrapper>
+          <IconContext.Provider value={{ color: "white"}}>
+            <GearIcon onClick={toggleOpen} />
+          </IconContext.Provider>
+          {isOpen &&
+            <Modal title='Edit FX' close={toggleOpen}>
+              <StepOptions increaseValue={increaseFX} decreaseValue={decreaseFX} />
+            </Modal>
+          }
+        </OptionWrapper>
+      }
+    </ActionWrapper>
   )
 }
 
@@ -114,14 +142,7 @@ const enhancer: HOC<*, Props> = compose(
   withStateHandlers(
     {
       canPlay: true,
-      fx: [
-        // Needs to be an array because we have sequences. Connect each sample fx to its correct sequence
-        {
-          pitch: 1,
-          volume: 1,
-          reverb: 1,
-        }
-      ],
+      fx: [],
     },
     {
       setCanPlay: () => (v) => ({ canPlay: v }),
@@ -130,24 +151,25 @@ const enhancer: HOC<*, Props> = compose(
   ),
   withHandlers({
     increaseFX: props => key => {
-      let newFx = props.fx
+      const newFx = props.fx.slice()
+      const propValue = ((newFx[props.currentSequence] && newFx[props.currentSequence][key]) || 1) + 0.05
 
-      newFx = {
-        ...newFx,
-        [key]: newFx[key] + 1,
+      newFx[props.currentSequence] = {
+        ...newFx[props.currentSequence],
+        [key]: propValue
       }
-
       props.setFX(newFx)
     },
     decreaseFX: props => key => {
-      let newFx = props.fx
+      const newFx = props.fx.slice()
+      const propValue = ((newFx[props.currentSequence] && newFx[props.currentSequence][key]) || 1) - 0.05
 
-      newFx = {
-        ...newFx,
-        [key]: newFx[key] - 0.1,
+      newFx[props.currentSequence] = {
+        ...newFx[props.currentSequence],
+        [key]: propValue
       }
-
       props.setFX(newFx)
+
     },
     handleSelection: props => index => {
       let sequence = R.path(['sequences', props.currentSequence], props.instrument)

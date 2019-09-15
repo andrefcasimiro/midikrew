@@ -16,7 +16,6 @@ type Props = {
 
 
 const StepOptions = ({ increaseValue, decreaseValue }: Props) => {
-  console.log('rerendering....')
   const tabs = [
     {
       name: 'Volume',
