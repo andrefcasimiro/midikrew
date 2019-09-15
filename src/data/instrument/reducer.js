@@ -32,6 +32,21 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
         instruments,
       }
     }
+    case ACTIONS.Types.UPDATE_INSTRUMENT_SAMPLE: {
+      // $Ignore
+      const instruments = state.instruments.slice()
+      const instrumentToUpdate = instruments.find(instrument => instrument.id === action.payload.instrumentID)
+
+      if (instrumentToUpdate) {
+        instrumentToUpdate.sampleSource = action.payload.sampleSource
+        instruments[instruments.indexOf(instrumentToUpdate)] = instrumentToUpdate
+      }
+
+      return {
+        ...state,
+        instruments,
+      }
+    }
     case ACTIONS.Types.UPDATE_SEQUENCE: {
       const instrumentID = action.payload.instrumentID //
       const sequenceID = action.payload.sequenceID //
@@ -44,13 +59,11 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
       if (instrumentToUpdate) {
         instrumentToUpdate.sequences[sequenceID] = sequence
         instruments[instruments.indexOf(instrumentToUpdate)] = instrumentToUpdate
+      }
 
-        return {
-          ...state,
-          instruments,
-        }
-      } else {
-        return state
+      return {
+        ...state,
+        instruments,
       }
     }
     default:

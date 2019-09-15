@@ -1,6 +1,6 @@
 // @flow
 import React, { type Node } from 'react'
-import { compose, type HOC, } from 'recompose'
+import { compose, type HOC } from 'recompose'
 import {
   RelativeWrapper,
   AbsoluteWrapper,

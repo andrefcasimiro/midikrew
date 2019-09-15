@@ -17,8 +17,19 @@ export const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  align-items: center;
+  align-items: ${p => p.align || 'center'};
   max-width: 80rem;
+`
+
+export const SongTools = styled(MainContainer)`
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  max-width: none;
+  flex-direction: row;
+  padding: 1rem;
+  margin-bottom: 0;
+  padding-bottom: 0;
 `
 
 export const TopContainer = styled.div`
@@ -59,7 +70,6 @@ export const Column = styled.div`
   ${mq('max').tabletWide} {
     height: 2.6rem;
   }
-
 `
 
 export const Instrument = styled(TopContainer)`
@@ -74,12 +84,27 @@ export const Instrument = styled(TopContainer)`
   align-items: center;
 
   ${mq('max').tabletWide} {
-    width: 7rem;
+    width: 10rem;
+    font-size: 1.2rem;
   }
 
   ${p => p.blank && css`
     background: none;
   `}
+
+  p {
+    font-size: 1.4rem;
+    color: ${theme.colors.monicastro.white};
+    width: 7rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    ${mq('max').tabletWide} {
+      font-size: 1rem;
+      width: 5rem;
+    }
+  }
 `
 
 export const GridWrapper = styled(BottomContainer)`

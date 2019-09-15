@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import SequenceManager from 'components/SequenceManager'
+import SequenceManager from 'components/Editor/SequenceManager'
 
 const Home = () => {
 

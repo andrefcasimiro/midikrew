@@ -7,7 +7,7 @@ import 'assets/fonts/index.css'
 import { Provider as ReduxProvider } from "react-redux"
 import configureStore from "global/store"
 
-const reduxStore = configureStore(window.REDUX_INITIAL_DATA);
+export const reduxStore = configureStore(window.REDUX_INITIAL_DATA);
 
 const fontObserver = new FontFaceObserver('defaultFont', {})
 

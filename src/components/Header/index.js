@@ -7,19 +7,19 @@ import StatefulLink from 'components/StatefulLink'
 import { Link, BoldLink } from 'componentsStyled/Typography'
 import { Container, Spacer } from './styled'
 
-type Added = {
-  signInWithEmailAndPassword: (email: string, password: string) => void,
-  createUserWithEmailAndPassword: (email: string, password: string) => void,
-  signInWithGoogle: () => void,
-  signInWithFacebook: () => void,
-  signInWithGithub: () => void,
-  signInWithTwitter: () => void,
-  signInAnonymously: () => void,
-  signOut: () => void,
-  setError: (error: any) => void,
-  user?: firebase.User,
-  error?: firebase.FirebaseError,
-}
+// type Added = {
+//   signInWithEmailAndPassword: (email: string, password: string) => void,
+//   createUserWithEmailAndPassword: (email: string, password: string) => void,
+//   signInWithGoogle: () => void,
+//   signInWithFacebook: () => void,
+//   signInWithGithub: () => void,
+//   signInWithTwitter: () => void,
+//   signInAnonymously: () => void,
+//   signOut: () => void,
+//   setError: (error: any) => void,
+//   user?: firebase.User,
+//   error?: firebase.FirebaseError,
+// }
 
 const Header = ({ user }) => {
   const navLinks = user ? appConfiguration.navLinks.user : appConfiguration.navLinks.visitor
@@ -48,8 +48,6 @@ const Header = ({ user }) => {
 }
 
 export default withFirebaseAuth({
-  providers: {
-
-  },
+  providers: {},
   firebaseAppAuth: firebase.auth(),
 })(Header)
