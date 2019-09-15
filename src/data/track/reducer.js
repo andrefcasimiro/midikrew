@@ -82,7 +82,6 @@ const trackReducer = (state: typeof defaultState = defaultState, action: { type:
       const sequences = state.sequences.slice()
       sequences.push(newSequence)
 
-      console.log('new sequence: ', sequences)
       return {
         ...state,
         sequences,

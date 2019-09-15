@@ -3,19 +3,18 @@ import styled, { css } from 'styled-components'
 import theme from 'global/theme'
 import { mq } from 'common/mediaQueries'
 
-export const Step = styled.div`
+export const StepWrapper = styled.div`
   height: 100%;
   flex-grow: 1;
-  background: ${
-    p => p.selected
-          ? theme.colors.monicastro.blue
-          : p.index % 4 === 0 ? theme.colors.monicastro.darkGreyLight : theme.colors.monicastro.grey
-  };
+  background: ${p => p.index % 4 === 0 ? theme.colors.monicastro.darkGreyLight : theme.colors.monicastro.grey};
+  border-right: 1px solid ${theme.colors.monicastro.darkGrey};
+  flex-direction: row;
+`
 
-  border-right: ${p => p.selected
-    ? `1px solid ${theme.colors.monicastro.blue}`
-    : `1px solid ${theme.colors.monicastro.darkGrey}`
-  };
+export const Selected = styled.div`
+  height: 100%;
+  background: ${theme.colors.monicastro.blue};
+  border-right: 1px solid ${theme.colors.monicastro.blue};
 
   ${mq('min').tabletWide} {
     &:hover {
