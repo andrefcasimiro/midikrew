@@ -4,14 +4,17 @@ import type { Instrument } from './types'
 
 type State = {
   instruments: Array<Instrument>,
-  copyBuffer: Array<Array<{
-    index: number,
-    fx: {
-      pitch?: number,
-      volume?: number,
-      reverb?: boolean,
+  copyBuffer: Array<{
+    instrumentID: number,
+    sequence: {
+      index: number,
+      fx: {
+        pitch?: number,
+        volume?: number,
+        reverb?: boolean,
+      }
     }
-  }>>,
+  }>,
 }
 
 const defaultState: State = {
@@ -86,7 +89,10 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
       instruments.forEach((instrument, index) => {
         if (instrument.sequences[targetSequence]) {
 
-          copied.push(instrument.sequences[targetSequence])
+          copied.push({
+            instrumentID: instrument.id,
+            sequence: instrument.sequences[targetSequence]
+          })
 
           console.log('copied: ', copied)
 
@@ -104,20 +110,23 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
       // $Ignore
       const instruments = state.instruments.slice()
 
-      instruments.forEach((instrument, index) => {
+      // for (let i = 0; i <= instruments.length; i++) {
+      //   if (instruments[i] && instruments[i].sequences) {
+      //     console.log('copy: ', state.copyBuffer)
+      //     instruments[i].sequences[targetSequence] = (state.copyBuffer).flat()
+      //   }
+      // }
 
-        const match = state.copyBuffer[index]
-        
-        if (match && match.sequences && match.sequences.length) {
-          console.log(match.sequences[targetSequence])
+      const copyBuffer = state.copyBuffer.slice()
+
+      instruments.forEach((instrument) => {
+
+        const match = copyBuffer.findIndex(entry => entry.instrumentID === instrument.id)
+
+        if (match !== -1) {
+          instrument.sequences[targetSequence] = state.copyBuffer[match].sequence
         }
-
-        console.log('state.copyBuffer[index]: ', state.copyBuffer[index])
-
-        //instrument.sequences[targetSequence] = state.copyBuffer[index].sequences[targetSequence]
-
       })
-
 
       return {
         ...state,

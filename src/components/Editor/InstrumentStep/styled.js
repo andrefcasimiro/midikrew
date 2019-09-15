@@ -16,7 +16,6 @@ export const OptionWrapper = styled.div`
   position: absolute;
   right: 0;
   padding-top: 0;
-  background: ${theme.colors.monicastro.dark};
 
   display: flex;
   width: auto;
@@ -31,12 +30,6 @@ export const OptionWrapper = styled.div`
     width: 20%;
     padding-top: 0.2rem;
     height: 100%;
-    opacity: 0;
-    transition: 0.2s opacity ease;
-
-    &:hover {
-      opacity: 1;
-    }
   }
 `
 
