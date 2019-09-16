@@ -138,8 +138,6 @@ const enhancer: HOC<*, Props> = compose(
         ...sequence[sequenceIndex],
         fx,
       }
-      console.log('sequence[sequenceIndex]: ', sequence)
-
 
       props.updateSequence({
         sequence,

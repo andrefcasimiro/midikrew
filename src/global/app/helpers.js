@@ -74,7 +74,8 @@ const importProject = json => {
 
 
   // Set Number Of Sequences
-  for (let i = 1; i < file.sequences.length; i++) {
+  const fileSequencesLength = file.sequences.length
+  for (let i = 1; i < fileSequencesLength; i++) {
     reduxStore.dispatch(
       TRACK_ACTIONS.addSequence()
     )
