@@ -64,6 +64,8 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
       const sequenceID = action.payload.sequenceID //
       const sequence = action.payload.sequence
 
+      console.log(instrumentID, sequenceID, sequence)
+
       // $Ignore
       const instruments = state.instruments.slice() // Always slice the state!
       const instrumentToUpdate = instruments.find(instrument => instrument.id === instrumentID)
@@ -88,14 +90,10 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
 
       instruments.forEach((instrument, index) => {
         if (instrument.sequences[targetSequence]) {
-
           copied.push({
             instrumentID: instrument.id,
             sequence: instrument.sequences[targetSequence]
           })
-
-          console.log('copied: ', copied)
-
         }
       })
 

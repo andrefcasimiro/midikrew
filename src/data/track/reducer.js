@@ -70,6 +70,7 @@ const trackReducer = (state: typeof defaultState = defaultState, action: { type:
       return {
         ...state,
         currentSequence: action.payload,
+        currentStep: 0,
       }
     }
     case ACTIONS.Types.ADD_SEQUENCE: {

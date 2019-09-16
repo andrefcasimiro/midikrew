@@ -20,26 +20,25 @@ type Props = {
   },
 }
 
-const StepOptions = ({ setFx, fx }: Props) => {
-  const tabs = [
-    {
-      name: 'Volume',
-      key: 'volume',
-      type: 'number',
-    },
-    {
-      name: 'Pitch',
-      key: 'pitch',
-      type: 'number',
-    },
-    {
-      name: 'Reverb',
-      key: 'reverb',
-      type: 'boolean',
-    },
-  ]
+const tabs = [
+  {
+    name: 'Volume',
+    key: 'volume',
+    type: 'number',
+  },
+  {
+    name: 'Pitch',
+    key: 'pitch',
+    type: 'number',
+  },
+  {
+    name: 'Reverb',
+    key: 'reverb',
+    type: 'boolean',
+  },
+]
 
-  console.log('fx: ', fx)
+const StepOptions = ({ setFx, fx }: Props) => {
   return (
     <Wrapper>
       {tabs.map((tab, index) =>
@@ -54,12 +53,11 @@ const StepOptions = ({ setFx, fx }: Props) => {
               </>
             : <>
                 <UpIcon onClick={() => setFx(tabs[index].key, 'increase')}/>
-                  <Field>{tabs[index].name}</Field>
-                  <Text>{fx && fx[tab.key] && (fx[tab.key]).toFixed(2)}</Text>
+                <Field>{tabs[index].name}</Field>
+                <Text>{fx && fx[tab.key] && (fx[tab.key]).toFixed(2)}</Text>
                 <DownIcon onClick={() => setFx(tabs[index].key, 'decrease')}/>
               </>
           }
-
         </Option>
       )}
     </Wrapper>

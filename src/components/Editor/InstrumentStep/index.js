@@ -14,56 +14,11 @@ import {
 import { IconContext } from "react-icons"
 import { ActionWrapper, StepWrapper, OptionWrapper } from './styled'
 import Modal from 'modals/_Modal'
-import {
-  loadSample
-} from 'data/audio/helpers'
-// $Ignore
-import convolver from 'assets/samples/convolver.wav'
-import { reduxStore } from '../../../index'
+import { play } from 'data/audio/helpers'
 
 type Props = {
   index: number,
   instrument: Instrument,
-}
-
-let transition = false
-
-// Global used as the reverb signal
-let convolverBuffer
-
-/**
- * @param {AudioBuffer} sampleSource - The base sample source
- * @param {AudioContext} audioContext - The audio context instance
- * @param {Object} fxChain - The fx to apply to the sample source
- */
-const play = (
-  sampleSource,
-  audioContext,
-  fxChain,
-) => {
-  var source = audioContext.createBufferSource(); // creates a sound source
-  source.buffer = sampleSource
-
-  // Pitch
-  source.playbackRate.value = (fxChain && fxChain.pitch) || 1
-
-  if (fxChain && fxChain.reverb && fxChain.reverb === true) {
-    var convolver = audioContext.createConvolver();
-    convolver.buffer = convolverBuffer
-    convolver.connect(audioContext.destination)
-    source.connect(convolver)
-  }
-
-  if (fxChain && fxChain.volume) {
-    // Volume
-    var gainNode = audioContext.createGain()
-    gainNode.gain.value = fxChain.volume
-    gainNode.connect(audioContext.destination)
-    source.connect(gainNode)
-  }
-
-  source.connect(audioContext.destination)
-  source.start(0)
 }
 
 const InstrumentStep = ({
@@ -83,8 +38,11 @@ const InstrumentStep = ({
   toggleOpen,
   isOpen,
 }) => {
-  let trigger = canPlay && playerState === PLAYER_STATE.playing && index === currentStep && selected
-  
+  let trigger = 
+    canPlay && 
+    playerState === PLAYER_STATE.playing && 
+    index === currentStep && 
+    selected
 
   // Avoids an accidental retriggering caused by the nature of this component's lifecycle update
   if (trigger) {
@@ -215,12 +173,6 @@ const enhancer: HOC<*, Props> = compose(
     }
   }),
   lifecycle({
-    componentDidMount() {
-      // Load convolver signal
-      loadSample(convolver, reduxStore.getState().track.audioContext, 1, 1, res => {
-        convolverBuffer = res
-      })
-    },
     shouldComponentUpdate(nextProps) {
       return !this.props.selected && !nextProps.selected
         ? false

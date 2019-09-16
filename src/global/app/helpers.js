@@ -20,6 +20,12 @@ import {
   junglePads,
 } from 'data/audio/junglePads'
 import {
+  awesomePads,
+} from 'data/audio/awesomePads'
+import {
+  houseSynths,
+} from 'data/audio/house_synths'
+import {
   loadPack,
 } from 'data/audio/helpers'
 import {
@@ -200,9 +206,23 @@ const instrumentsMenu = {
         ]} />,
       },
       {
+        name: 'Synths',
+        icon: InstrumentIcon,
+        component: () => <Menu options={[
+          {
+            name: 'House Synths',
+            onClick: () => loadPack(houseSynths),
+          },
+        ]}/>
+      },
+      {
         name: 'Pads',
         icon: InstrumentIcon,
         component: () => <Menu options={[
+          {
+            name: 'Awesome Pads',
+            onClick: () => loadPack(awesomePads),
+          },
           {
             name: 'Jungle Pads',
             onClick: () => loadPack(junglePads),
