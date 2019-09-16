@@ -55,7 +55,7 @@ const InstrumentStep = ({
 
   return (
     <ActionWrapper>
-      <StepWrapper selected={selected} key={index} index={index} onClick={() => handleSelection(index)} />
+      <StepWrapper selected={selected} key={index} index={index} onClick={handleSelection} />
         {trigger
           ? play(instrument.sampleSource, audioContext, fxObj)
           : null
@@ -131,8 +131,15 @@ const enhancer: HOC<*, Props> = compose(
         ? props.instrument.sequences[props.currentSequence].slice()
         : []
 
-      let targetIndex = sequence.findIndex(seq => seq.index === props.index)
-      sequence[targetIndex].fx = fx
+
+      let sequenceIndex = sequence.findIndex(seq => seq.index === props.index)
+
+      sequence[sequenceIndex] = {
+        ...sequence[sequenceIndex],
+        fx,
+      }
+      console.log('sequence[sequenceIndex]: ', sequence)
+
 
       props.updateSequence({
         sequence,
@@ -140,18 +147,18 @@ const enhancer: HOC<*, Props> = compose(
         instrumentID: props.instrument.id,
       })
     },
-    handleSelection: props => (index) => {
+    handleSelection: props => () => {
       let sequence = R.path(['sequences', props.currentSequence], props.instrument)
         ? props.instrument.sequences[props.currentSequence].slice()
         : []
 
-      const sequenceIndex = sequence.findIndex(seq => seq.index === index)
+      const sequenceIndex = sequence.findIndex(seq => seq.index === props.index)
 
       if (sequenceIndex >= 0) { // REMOVE
         sequence.splice(sequenceIndex, 1)
       } else { // ADD
         sequence = sequence.concat({
-          index
+          index: props.index
         })
       }
 

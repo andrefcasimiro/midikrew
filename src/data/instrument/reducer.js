@@ -64,16 +64,13 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
       const sequenceID = action.payload.sequenceID //
       const sequence = action.payload.sequence
 
-      console.log(instrumentID, sequenceID, sequence)
-
       // $Ignore
       const instruments = state.instruments.slice() // Always slice the state!
+
       const instrumentToUpdate = instruments.find(instrument => instrument.id === instrumentID)
 
       if (instrumentToUpdate) {
-        instrumentToUpdate.sequences[sequenceID] = sequence
-
-        instruments[instruments.indexOf(instrumentToUpdate)] = instrumentToUpdate
+        instruments[instruments.indexOf(instrumentToUpdate)].sequences[sequenceID] = sequence
       }
 
       return {
@@ -92,7 +89,8 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
         if (instrument.sequences[targetSequence]) {
           copied.push({
             instrumentID: instrument.id,
-            sequence: instrument.sequences[targetSequence]
+            sequence: instrument.sequences[targetSequence],
+            sequenceID: targetSequence,
           })
         }
       })
@@ -107,14 +105,6 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
 
       // $Ignore
       const instruments = state.instruments.slice()
-
-      // for (let i = 0; i <= instruments.length; i++) {
-      //   if (instruments[i] && instruments[i].sequences) {
-      //     console.log('copy: ', state.copyBuffer)
-      //     instruments[i].sequences[targetSequence] = (state.copyBuffer).flat()
-      //   }
-      // }
-
       const copyBuffer = state.copyBuffer.slice()
 
       instruments.forEach((instrument) => {
@@ -122,7 +112,9 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
         const match = copyBuffer.findIndex(entry => entry.instrumentID === instrument.id)
 
         if (match !== -1) {
+          // $Ignore
           instrument.sequences[targetSequence] = state.copyBuffer[match].sequence
+          
         }
       })
 

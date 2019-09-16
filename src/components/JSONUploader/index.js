@@ -27,10 +27,6 @@ var fileReader = new FileReader()
 const handleFileRead = (callback: any) => {
   const content = fileReader.result
 
-  console.log('final content: ', content)
-
-  console.log('callback: ', callback)
-
   // Apply json transformations
 
   if (callback) {
