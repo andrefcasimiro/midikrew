@@ -7,6 +7,9 @@ const Types = {
   REMOVE_INSTRUMENT: "REMOVE_INSTRUMENT",
   UPDATE_INSTRUMENT_SAMPLE: "UPDATE_INSTRUMENT_SAMPLE",
   UPDATE_SEQUENCE: "UPDATE_SEQUENCE",
+  COPY_SEQUENCE: "COPY_SEQUENCE",
+  PASTE_SEQUENCE: "PASTE_SEQUENCE",
+  CLEAR_ALL: "CLEAR_ALL",
 }
 
 // actions
@@ -31,10 +34,27 @@ const updateSequence = (payload: { sequence: Array<number>, sequenceID: number, 
   payload,
 })
 
+const copySequence = (targetSequence: number) => ({
+  type: Types.COPY_SEQUENCE,
+  payload: targetSequence,
+})
+
+const pasteSequence = (targetSequence: number) => ({
+  type: Types.PASTE_SEQUENCE,
+  payload: targetSequence,
+})
+
+const clearAll = () => ({
+  type: Types.CLEAR_ALL,
+})
+
 export default {
   addInstrument,
   removeInstrument,
   updateInstrumentSample,
   updateSequence,
+  copySequence,
+  pasteSequence,
+  clearAll,
   Types,
 }

@@ -1,6 +1,5 @@
 // @flow
-import React, { type Node } from 'react'
-import { compose, type HOC, type Component, lifecycle } from 'recompose'
+import React, { type Node, Component } from 'react'
 import {
   IoIosArrowDown as ArrowDownIcon,
   IoIosArrowUp as ArrowUpIcon,
@@ -11,7 +10,7 @@ import { Row } from 'componentsStyled/Layout'
 import { Wrapper } from './styled'
 
 type Props = {|
-  component: Component,
+  component: any,
   children: Node,
   data?: Object,
 |}
@@ -22,34 +21,63 @@ type Props = {|
  * @param {React.Node} children - Most likely the name of the option to be displayed
  * @param {Object} data - Optional parameter to watch. If it changes, we close all previous open stateful links (if user logs in, for example) 
  */
-const StatefulLink = ({ isOpen, toggleOpen, component: C, children }) => {
-  return (
-    <React.Fragment>
-      <Wrapper>
-        <Wrapper onClick={toggleOpen}>
-          <Row>
-            {children} {isOpen ? <ArrowUpIcon /> : <ArrowDownIcon />}
-          </Row>
+class StatefulLink extends Component <any, any> {
+
+  constructor(props: Props) {
+    super(props)
+
+    this.state = {
+      myRef: React.createRef(),
+    }
+
+    // $Ignore
+    this.handleClickOutside = this.handleClickOutside.bind(this);
+  }
+
+  handleClickOutside(event: MouseEvent) {
+    const { myRef } = this.state
+
+    if (!myRef || !myRef.current) {
+      return
+    }
+
+    if (!myRef.current.contains(event.target)) {
+      this.props.close()
+    }
+  }
+  componentDidUpdate(prevProps) {
+    if (prevProps.data !== this.props.data) {
+      this.props.close()
+    }
+  }
+
+  componentDidMount() {
+    document.addEventListener('mousedown', this.handleClickOutside)
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutside)
+  }
+
+  render () {
+    const C = this.props.component
+    return (
+      <React.Fragment>
+        <Wrapper ref={this.state.myRef}>
+          <Wrapper onClick={this.props.toggleOpen}>
+            <Row>
+              {this.props.children} {this.props.isOpen ? <ArrowUpIcon /> : <ArrowDownIcon />}
+            </Row>
+          </Wrapper>
+          {this.props.isOpen &&
+            <ContextMenu>
+              <C />
+            </ContextMenu>
+          }
         </Wrapper>
-        {isOpen &&
-          <ContextMenu>
-            <C />
-          </ContextMenu>
-        }
-      </Wrapper>
-    </React.Fragment>
-  )
+      </React.Fragment>
+    )
+  }
 }
 
-const enhancer: HOC<*, Props> = compose(
-  withOpen,
-  lifecycle({
-    componentDidUpdate(prevProps) {
-      if (prevProps.data !== this.props.data) {
-        this.props.close()
-      }
-    }
-  })
-)
-
-export default enhancer(StatefulLink)
+export default withOpen(StatefulLink)

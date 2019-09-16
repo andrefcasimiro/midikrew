@@ -9,59 +9,16 @@ import type { Instrument } from 'data/instrument/types'
 import { PLAYER_STATE } from 'data/track/reducer'
 import StepOptions from './StepOptions'
 import {
-  TiCogOutline as GearIcon,
-} from 'react-icons/ti'
+  IoMdColorWand as GearIcon,
+} from 'react-icons/io'
 import { IconContext } from "react-icons"
 import { ActionWrapper, StepWrapper, OptionWrapper } from './styled'
 import Modal from 'modals/_Modal'
-import {
-  loadSample
-} from 'data/audio/helpers'
-import convolver from 'assets/samples/convolver.wav'
-import { reduxStore } from '../../../index'
+import { play } from 'data/audio/helpers'
 
 type Props = {
   index: number,
   instrument: Instrument,
-}
-
-// Global used as the reverb signal
-let convolverBuffer
-
-/**
- *
- * @param {AudioBuffer} sampleSource - The base sample source
- * @param {AudioContext} audioContext - The audio context instance
- * @param {Object} fxChain - The fx to apply to the sample source
- */
-const play = (
-  sampleSource,
-  audioContext,
-  fxChain,
-) => {
-  var source = audioContext.createBufferSource(); // creates a sound source
-  source.buffer = sampleSource
-
-  // Pitch
-  source.playbackRate.value = (fxChain && fxChain.pitch) || 1
-
-  if (fxChain && fxChain.reverb && fxChain.reverb === true) {
-    var convolver = audioContext.createConvolver();
-    convolver.buffer = convolverBuffer
-    convolver.connect(audioContext.destination)
-    source.connect(convolver)
-  }
-
-  if (fxChain && fxChain.volume) {
-    // Volume
-    var gainNode = audioContext.createGain()
-    gainNode.gain.value = fxChain.volume
-    gainNode.connect(audioContext.destination)
-    source.connect(gainNode)
-  }
-
-  source.connect(audioContext.destination)
-  source.start(0)
 }
 
 const InstrumentStep = ({
@@ -77,12 +34,15 @@ const InstrumentStep = ({
   playerState,
   selected,
   fx,
-  increaseFX,
-  decreaseFX,
+  setFX,
   toggleOpen,
   isOpen,
 }) => {
-  const trigger = canPlay && selected && playerState === PLAYER_STATE.playing && index === currentStep
+  let trigger = 
+    canPlay && 
+    playerState === PLAYER_STATE.playing && 
+    index === currentStep && 
+    selected
 
   // Avoids an accidental retriggering caused by the nature of this component's lifecycle update
   if (trigger) {
@@ -91,11 +51,13 @@ const InstrumentStep = ({
     setTimeout(() => { setCanPlay(true) }, interval)
   }
 
+  const fxObj = fx || {}
+
   return (
     <ActionWrapper>
-      <StepWrapper selected={selected} key={index} index={index} onClick={() => handleSelection(index)} />
+      <StepWrapper selected={selected} key={index} index={index} onClick={handleSelection} />
         {trigger
-          ? play(instrument.sampleSource, audioContext, fx[currentSequence])
+          ? play(instrument.sampleSource, audioContext, fxObj)
           : null
         }
       {selected &&
@@ -105,7 +67,7 @@ const InstrumentStep = ({
           </IconContext.Provider>
           {isOpen &&
             <Modal title='Edit FX' close={toggleOpen}>
-              <StepOptions increaseValue={increaseFX} decreaseValue={decreaseFX} fx={fx[currentSequence]} />
+              <StepOptions setFx={setFX} fx={fxObj} />
             </Modal>
           }
         </OptionWrapper>
@@ -130,52 +92,72 @@ const mapDispatchToProps = {
 const enhancer: HOC<*, Props> = compose(
   withOpen,
   connect(mapStateToProps, mapDispatchToProps),
+  withProps(props => {
+    const instrumentSequences = props.instrument.sequences[props.currentSequence]
+
+    // Find corresponding FX for this step
+    const match = instrumentSequences && instrumentSequences.find(entry => entry.index === props.index)
+
+    const fx = (match && match.fx) ? match.fx : {}
+
+    return {
+      fx
+    }
+  }),
   withStateHandlers(
     {
       canPlay: true,
-      fx: [],
     },
     {
       setCanPlay: () => (v) => ({ canPlay: v }),
-      setFX: () => (fx) => ({ fx }),
     },
   ),
   withHandlers({
-    increaseFX: props => key => {
-      const newFx = props.fx.slice()
+    setFX: props => (key, type: 'increase' | 'decrease') => {
+      let fx = props.fx || {}
+
       const propValue = key === 'reverb' // hardcode for now
-        ? true
-        : ((newFx[props.currentSequence] && newFx[props.currentSequence][key]) || 1) + 0.05
+        ? type === 'decrease' ? true : false
+        : (type === 'increase' ? (fx[key] || 1) + 0.05 : (fx[key] || 1) - 0.05)
 
-      newFx[props.currentSequence] = {
-        ...newFx[props.currentSequence],
-        [key]: propValue
+      // Update sequence
+
+      fx = {
+        ...fx,
+        [key]: propValue,
       }
-      props.setFX(newFx)
-    },
-    decreaseFX: props => key => {
-      const newFx = props.fx.slice()
-      const propValue = key === 'reverb' // hardcode for now
-        ? false
-        : ((newFx[props.currentSequence] && newFx[props.currentSequence][key]) || 1) - 0.05
 
-      newFx[props.currentSequence] = {
-        ...newFx[props.currentSequence],
-        [key]: propValue
-      }
-      props.setFX(newFx)
-
-    },
-    handleSelection: props => index => {
       let sequence = R.path(['sequences', props.currentSequence], props.instrument)
         ? props.instrument.sequences[props.currentSequence].slice()
         : []
 
-      if (sequence.includes(index)) { // REMOVE
-        const entry = sequence.indexOf(index)
-        sequence.splice(entry, 1)
+
+      let sequenceIndex = sequence.findIndex(seq => seq.index === props.index)
+
+      sequence[sequenceIndex] = {
+        ...sequence[sequenceIndex],
+        fx,
+      }
+
+      props.updateSequence({
+        sequence,
+        sequenceID: props.currentSequence,
+        instrumentID: props.instrument.id,
+      })
+    },
+    handleSelection: props => () => {
+      let sequence = R.path(['sequences', props.currentSequence], props.instrument)
+        ? props.instrument.sequences[props.currentSequence].slice()
+        : []
+
+      const sequenceIndex = sequence.findIndex(seq => seq.index === props.index)
+
+      if (sequenceIndex >= 0) { // REMOVE
+        sequence.splice(sequenceIndex, 1)
       } else { // ADD
-        sequence = sequence.concat(index)
+        sequence = sequence.concat({
+          index: props.index
+        })
       }
 
       props.updateSequence({
@@ -186,30 +168,21 @@ const enhancer: HOC<*, Props> = compose(
     },
   }),
   withProps(props => {
-    const instrumentSequence = props.instrument.sequences && props.instrument.sequences[props.currentSequence]
+    const instrumentSequence = props.instrument.sequences
+      && props.instrument.sequences[props.currentSequence]
 
-    const selected = instrumentSequence && instrumentSequence.includes(props.index)
+    const selected = instrumentSequence && instrumentSequence.find(seq => seq.index === props.index)
 
     return {
       selected,
     }
   }),
   lifecycle({
-    componentDidMount() {
-      // Load convolver signal
-      loadSample(convolver, reduxStore.getState().track.audioContext, 1, 1, res => {
-        convolverBuffer = res
-      })
-    },
     shouldComponentUpdate(nextProps) {
-      if (
-        (!this.props.selected && !nextProps.selected)
-      ) {
-        return false
-      }
-
-      return true
-    }
+      return !this.props.selected && !nextProps.selected
+        ? false
+        : true
+    },
   })
 )
 

@@ -8,15 +8,29 @@ export const ActionWrapper = styled.div`
   flex-direction: row;
   flex-grow: 1;
   height: 100%;
+  width: auto;
+  position: relative;
 `
 
 export const OptionWrapper = styled.div`
-  display: flex;
-  height: 2rem;
-  width: 2rem;
   position: absolute;
-  justify-content: center;
-  align-items: center;
+  right: 0;
+  padding-top: 0;
+
+  display: flex;
+  width: auto;
+  height: 40%;
+  flex-direction: column;
+
+  ${mq('max').phoneWide} {
+    width: 100%;
+  }
+
+  ${mq('min').tabletWide} {
+    width: 20%;
+    padding-top: 0.2rem;
+    height: 100%;
+  }
 `
 
 export const StepWrapper = styled.div`

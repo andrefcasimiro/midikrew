@@ -4,10 +4,22 @@ import type { Instrument } from './types'
 
 type State = {
   instruments: Array<Instrument>,
+  copyBuffer: Array<{
+    instrumentID: number,
+    sequence: {
+      index: number,
+      fx: {
+        pitch?: number,
+        volume?: number,
+        reverb?: boolean,
+      }
+    }
+  }>,
 }
 
 const defaultState: State = {
   instruments: [],
+  copyBuffer: [],
 }
 
 const instrumentReducer = (state: typeof defaultState = defaultState, action: { type: string, payload: any }) => {
@@ -54,16 +66,67 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
 
       // $Ignore
       const instruments = state.instruments.slice() // Always slice the state!
+
       const instrumentToUpdate = instruments.find(instrument => instrument.id === instrumentID)
 
       if (instrumentToUpdate) {
-        instrumentToUpdate.sequences[sequenceID] = sequence
-        instruments[instruments.indexOf(instrumentToUpdate)] = instrumentToUpdate
+        instruments[instruments.indexOf(instrumentToUpdate)].sequences[sequenceID] = sequence
       }
 
       return {
         ...state,
         instruments,
+      }
+    }
+    // EDITOR
+    case ACTIONS.Types.COPY_SEQUENCE: {
+      const targetSequence = action.payload
+      const instruments = state.instruments.slice()
+
+      let copied = []
+
+      instruments.forEach((instrument, index) => {
+        if (instrument.sequences[targetSequence]) {
+          copied.push({
+            instrumentID: instrument.id,
+            sequence: instrument.sequences[targetSequence],
+            sequenceID: targetSequence,
+          })
+        }
+      })
+
+      return {
+        ...state,
+        copyBuffer: copied,
+      }
+    }
+    case ACTIONS.Types.PASTE_SEQUENCE: {
+      const targetSequence = action.payload
+
+      // $Ignore
+      const instruments = state.instruments.slice()
+      const copyBuffer = state.copyBuffer.slice()
+
+      instruments.forEach((instrument) => {
+
+        const match = copyBuffer.findIndex(entry => entry.instrumentID === instrument.id)
+
+        if (match !== -1) {
+          // $Ignore
+          instrument.sequences[targetSequence] = state.copyBuffer[match].sequence
+          
+        }
+      })
+
+      return {
+        ...state,
+        instruments
+      }
+    }
+    case ACTIONS.Types.CLEAR_ALL: {
+      return {
+        ...state,
+        instruments: [],
       }
     }
     default:
