@@ -6,6 +6,7 @@ import { default as Uploader } from 'components/JSONUploader'
 import theme from 'global/theme'
 import Login from 'modals/Login'
 import Join from 'modals/Join'
+import Pack from 'modals/Pack'
 import firebase from 'global/firebase'
 import {
   TiUser as LoginIcon,
@@ -26,8 +27,11 @@ import {
   houseSynths,
 } from 'data/audio/house_synths'
 import {
-  loadPack,
-} from 'data/audio/helpers'
+  tr909,
+} from 'data/packs/tr909'
+import {
+  loader,
+} from 'data/packs/helpers'
 import {
   reduxStore
 } from '../../index'
@@ -202,7 +206,7 @@ const instrumentsMenu = {
           },
           {
             name: 'Roland TR-909',
-            onClick: () => console.log('teste'),
+            component: props => <Pack pack={tr909} {...props} />,
           },
         ]} />,
       },
@@ -212,7 +216,7 @@ const instrumentsMenu = {
         component: () => <Menu options={[
           {
             name: 'House Synths',
-            onClick: () => loadPack(houseSynths),
+            onClick: () => loader(houseSynths),
           },
         ]}/>
       },
@@ -222,11 +226,11 @@ const instrumentsMenu = {
         component: () => <Menu options={[
           {
             name: 'Awesome Pads',
-            onClick: () => loadPack(awesomePads),
+            onClick: () => loader(awesomePads),
           },
           {
             name: 'Jungle Pads',
-            onClick: () => loadPack(junglePads),
+            onClick: () => loader(junglePads),
           },
         ]}/>
       },
@@ -254,5 +258,6 @@ export const loggedInLinks = [
 ]
 
 export const loggedOutLinks = [
+  instrumentsMenu,
   memberLinks,
 ]

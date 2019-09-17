@@ -18,7 +18,7 @@ import InstrumentsManager from '../InstrumentsManager'
 import SongSettings from '../SongSettings'
 import INSTRUMENT_ACTIONS from 'data/instrument/actions'
 import TRACK_ACTIONS from 'data/track/actions'
-import { loadPack } from 'data/audio/helpers'
+import { loader } from 'data/packs/helpers'
 import { PLAYER_STATE, PLAYER_MODE } from 'data/track/reducer'
 import { IconButton } from 'componentsStyled/Buttons'
 import {
@@ -163,7 +163,7 @@ const enhancer: HOC<*, {}> = compose(
   }),
   lifecycle({
     componentDidMount() {
-      loadPack(tr909)
+      loader(tr909)
     },
 
     // If bpm changes, clear and reset interval of timerID
