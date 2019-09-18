@@ -116,3 +116,28 @@ export const GridWrapper = styled(BottomContainer)`
   margin: 0;
   height: 100%;
 `
+
+export const StyledStatefulLink = styled.span`
+  p {
+    margin: 0;
+  }
+
+  background: ${theme.colors.monicastro.grey};
+  border-radius: 0.25rem;
+  color: ${theme.colors.monicastro.dark};
+  cursor: pointer;
+
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+
+  ${mq('max').tabletWide} {
+    margin: 1rem 0;
+    padding: 1rem;
+
+    width: 100%;
+
+   &:first-child {
+      justify-content: center;
+    }
+  }
+`

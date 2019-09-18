@@ -17,7 +17,6 @@ const getFormat = (str: string) => {
   const splitted = str.split('.')
   const media = splitted[splitted.length - 1]
 
-  console.log('media: ', media)
   return media.toLowerCase()
 }
 
