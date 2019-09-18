@@ -25,6 +25,11 @@ import h24 from 'assets/samples/house_synths/24.mp3'
 import h25 from 'assets/samples/house_synths/25.mp3'
 import h26 from 'assets/samples/house_synths/26.mp3'
 
+export const credits = {
+  name: 'Breakbeat Paradise',
+  source: 'http://www.breakbeat-paradise.com/bb_samples.php',
+}
+
 export const houseSynths = [
   {
     id: `houseSynth1`,

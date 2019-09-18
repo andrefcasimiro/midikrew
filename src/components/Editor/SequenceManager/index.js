@@ -94,7 +94,7 @@ const SequenceManager = ({
               <StyledStatefulLink>
                 <StatefulLink component={InstrumentsMenu}> add an instrument </StatefulLink>
               </StyledStatefulLink>
-            from our sample library!</Text>
+            from the sample library!</Text>
           </PaddedContainer>
       }
     </Wrapper>

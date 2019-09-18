@@ -118,7 +118,7 @@ const enhancer: HOC<*, Props> = compose(
 
       const propValue = key === 'reverb' // hardcode for now
         ? type === 'decrease' ? true : false
-        : (type === 'increase' ? (fx[key] || 1) + 0.05 : (fx[key] || 1) - 0.05)
+        : (type === 'increase' ? (fx[key] || 1) + 0.01 : (fx[key] || 1) - 0.01)
 
       // Update sequence
 

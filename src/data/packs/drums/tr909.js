@@ -9,6 +9,11 @@ import tr909highTom from 'assets/samples/tr909/909HighTom.WAV'
 import tr909rimshot from 'assets/samples/tr909/909Rimshot.WAV'
 import tr909snare from 'assets/samples/tr909/909Snare.WAV'
 
+export const credits = {
+  name: 'Music Machines',
+  source: 'http://machines.hyperreal.org/manufacturers/Roland/',
+}
+
 export const tr909 = [
   {
     id: `kick909`,

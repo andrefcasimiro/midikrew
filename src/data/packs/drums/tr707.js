@@ -12,6 +12,11 @@ import ride from 'assets/samples/tr707/Ride.wav'
 import rimshot from 'assets/samples/tr707/RimShot.wav'
 import tamb from 'assets/samples/tr707/Tamb.wav'
 
+export const credits = {
+  name: 'Music Machines',
+  source: 'http://machines.hyperreal.org/manufacturers/Roland/',
+}
+
 export const tr707 = [
   {
     id: `707kick${Date.now()}`,

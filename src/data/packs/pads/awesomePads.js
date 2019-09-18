@@ -9,6 +9,11 @@ import a8 from 'assets/samples/awesome_pads/8.mp3'
 import a9 from 'assets/samples/awesome_pads/10.mp3'
 import a10 from 'assets/samples/awesome_pads/11.mp3'
 
+export const credits = {
+  name: 'Breakbeat Paradise',
+  source: 'http://www.breakbeat-paradise.com/bb_samples.php',
+}
+
 export const awesomePads = [
   {
     id: `1A`,

@@ -11,6 +11,11 @@ import j10 from 'assets/samples/jungle_pads/10.mp3'
 import j11 from 'assets/samples/jungle_pads/11.mp3'
 import j12 from 'assets/samples/jungle_pads/12.mp3'
 
+export const credits = {
+  name: 'Breakbeat Paradise',
+  source: 'http://www.breakbeat-paradise.com/bb_samples.php',
+}
+
 export const junglePads = [
   {
     id: `1Jungle`,
