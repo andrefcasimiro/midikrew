@@ -9,37 +9,42 @@ import tr909highTom from 'assets/samples/tr909/909HighTom.WAV'
 import tr909rimshot from 'assets/samples/tr909/909Rimshot.WAV'
 import tr909snare from 'assets/samples/tr909/909Snare.WAV'
 
+export const credits = {
+  name: 'Music Machines',
+  source: 'http://machines.hyperreal.org/manufacturers/Roland/',
+}
+
 export const tr909 = [
   {
-    id: `Instrument ${Date.now() + 1}`,
+    id: `kick909`,
     name: '909 Kick',
     samplePath: tr909kick,
     sampleSource: undefined,
     sequences: [],
   },
   {
-    id: `Instrument ${Date.now() + 2}`,
+    id: `cymbal909`,
     name: '909 Cymbal',
     samplePath: tr909cymbal,
     sampleSource: undefined,
     sequences: [],
   },
   {
-    id: `Instrument ${Date.now() + 3}`,
+    id: `clap909`,
     name: '909 Clap',
     samplePath: tr909clap,
     sampleSource: undefined,
     sequences: [],
   },
   {
-    id: `Instrument ${Date.now() + 4}`,
+    id: `closedHat909`,
     name: '909 C-Hat',
     samplePath: tr909closedHat,
     sampleSource: undefined,
     sequences: [],
   },
   {
-    id: `Instrument ${Date.now() + 5}`,
+    id: `openHat909`,
     name: '909 O-Hat',
     samplePath: tr909openHat,
     sampleSource: undefined,

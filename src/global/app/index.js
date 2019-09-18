@@ -12,7 +12,7 @@ export type Navlink = {
 
 export default {
   applicationName: 'Midikrew',
-  navLinks: {
+    navLinks: {
     user: loggedInLinks,
     visitor: loggedOutLinks,
   },

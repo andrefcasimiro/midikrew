@@ -72,3 +72,32 @@ export const IconButton = styled.button`
     color: ${theme.colors.monicastro.grey};
   `}
 `
+
+export const PaddedIconButton = styled(IconButton)`
+  padding: 0.5rem;
+  height: auto;
+  margin-top: 0.2rem;
+  border-radius: 0.2rem;
+
+  transition: 0.2s ease all;
+
+  &:hover {
+    background: ${theme.colors.monicastro.dark};
+    color: ${theme.colors.monicastro.white};
+  }
+`
+
+export const FullIconButton = styled(IconButton)`
+  padding: 0.5rem;
+  height: auto;
+  margin-top: 0.2rem;
+  border-radius: 0.2rem;
+  width: 100%;
+
+  transition: 0.2s ease all;
+
+  &:hover {
+    background: ${theme.colors.monicastro.dark};
+    color: ${theme.colors.monicastro.white};
+  }
+`
