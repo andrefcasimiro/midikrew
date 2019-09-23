@@ -55,14 +55,14 @@ const InstrumentStep = ({
 
   return (
     <ActionWrapper>
-      <StepWrapper selected={selected} key={index} index={index} onClick={handleSelection} />
+      <StepWrapper selected={selected} index={index} onClick={handleSelection} />
         {trigger
           ? play(instrument.sampleSource, audioContext, fxObj)
           : null
         }
       {selected &&
         <OptionWrapper>
-          <IconContext.Provider value={{ color: "white"}}>
+          <IconContext.Provider value={{ color: "white" }}>
             <GearIcon onClick={toggleOpen} />
           </IconContext.Provider>
           {isOpen &&
@@ -130,7 +130,6 @@ const enhancer: HOC<*, Props> = compose(
       let sequence = R.path(['sequences', props.currentSequence], props.instrument)
         ? props.instrument.sequences[props.currentSequence].slice()
         : []
-
 
       let sequenceIndex = sequence.findIndex(seq => seq.index === props.index)
 

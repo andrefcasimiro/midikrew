@@ -20,7 +20,7 @@ const InstrumentGrid = ({
       {generator.map(stepIndex => {
         return (
           <InstrumentStep
-            key={stepIndex}
+            key={stepIndex + instrumentOwner}
             index={stepIndex}
             instrument={instrument}
           />

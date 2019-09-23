@@ -25,9 +25,14 @@ const defaultState: State = {
 const instrumentReducer = (state: typeof defaultState = defaultState, action: { type: string, payload: any }) => {
   switch (action.type) {
     case ACTIONS.Types.ADD_INSTRUMENT:
+      const instrumentToAdd = {
+        ...action.payload,
+        id: Date.now(),
+      }
+
       // $Ignore
       const instruments = state.instruments.slice()
-      instruments.push(action.payload)
+      instruments.push(instrumentToAdd)
 
       return {
         ...state,
@@ -114,7 +119,6 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
         if (match !== -1) {
           // $Ignore
           instrument.sequences[targetSequence] = state.copyBuffer[match].sequence
-          
         }
       })
 
