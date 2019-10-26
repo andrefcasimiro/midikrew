@@ -12,8 +12,8 @@ type State = {
         pitch?: number,
         volume?: number,
         reverb?: boolean,
-      }
-    }
+      },
+    },
   }>,
 }
 
@@ -25,9 +25,19 @@ const defaultState: State = {
 const instrumentReducer = (state: typeof defaultState = defaultState, action: { type: string, payload: any }) => {
   switch (action.type) {
     case ACTIONS.Types.ADD_INSTRUMENT:
+
+      if (state.instruments.find(entry => entry.name === action.payload.name)) {
+        return state;
+      }
+
+      const instrumentToAdd = {
+        ...action.payload,
+        id: Date.now(),
+      }
+
       // $Ignore
       const instruments = state.instruments.slice()
-      instruments.push(action.payload)
+      instruments.push(instrumentToAdd)
 
       return {
         ...state,
@@ -60,22 +70,18 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
       }
     }
     case ACTIONS.Types.UPDATE_SEQUENCE: {
-      const instrumentID = action.payload.instrumentID //
-      const sequenceID = action.payload.sequenceID //
-      const sequence = action.payload.sequence
-
-      // $Ignore
-      const instruments = state.instruments.slice() // Always slice the state!
-
-      const instrumentToUpdate = instruments.find(instrument => instrument.id === instrumentID)
-
-      if (instrumentToUpdate) {
-        instruments[instruments.indexOf(instrumentToUpdate)].sequences[sequenceID] = sequence
-      }
+      const { instrumentID, sequenceID, sequence } = action.payload
 
       return {
         ...state,
-        instruments,
+        // $Ignore
+        instruments: state.instruments.map((entry, index) => {
+          if (entry.id === instrumentID) {
+            entry.sequences.splice(sequenceID, 0, sequence)
+          }
+
+          return entry;
+        }),
       }
     }
     // EDITOR
@@ -83,6 +89,7 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
       const targetSequence = action.payload
       const instruments = state.instruments.slice()
 
+      // TODO: Transform into a map
       let copied = []
 
       instruments.forEach((instrument, index) => {
@@ -114,7 +121,6 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
         if (match !== -1) {
           // $Ignore
           instrument.sequences[targetSequence] = state.copyBuffer[match].sequence
-          
         }
       })
 

@@ -9,24 +9,19 @@ for (let i = 0; i < 16; i++) {
   generator.push(i)
 }
 
-const InstrumentGrid = ({
-  instruments, // from redux
-  instrumentOwner,
-}) => {
+const InstrumentGrid = ({ instruments, instrumentOwner }) => {
   const instrument = instruments.find(i => i.id === instrumentOwner)
 
   return (
-    <React.Fragment>
-      {generator.map(stepIndex => {
-        return (
-          <InstrumentStep
-            key={stepIndex}
-            index={stepIndex}
-            instrument={instrument}
-          />
-        )
-      })}
-    </React.Fragment>
+    <>
+      {generator.map((stepIndex: number) => (
+        <InstrumentStep
+          key={stepIndex}
+          index={stepIndex}
+          instrument={instrument}
+        />
+      ))}
+    </>
   )
 }
 

@@ -12,7 +12,7 @@ for (let i = 0; i < 16; i++) {
  * Used to illustrate the current position of the sequencer at a given current step
  * @param {number} currentStep - The index of the current step of the sequence
  */
-const CurrentStep = ({ currentStep }) => (
+const CurrentStep = ({ currentStep }: any) => (
   <>
     {generator.map((index) => <StepIndicator key={index} active={currentStep === index} />)}
   </>
