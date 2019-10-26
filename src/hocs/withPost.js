@@ -16,7 +16,7 @@ function withPost<Props>(
       const db = endpointKey && database.ref().child(endpointKey)
 
       return {
-        submit: values => Promise.resolve(db.push(values)).then(result => console.log('result: ', result))
+        submit: values => Promise.resolve(db.push(values))
       }
     })
   )

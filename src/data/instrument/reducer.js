@@ -12,8 +12,8 @@ type State = {
         pitch?: number,
         volume?: number,
         reverb?: boolean,
-      }
-    }
+      },
+    },
   }>,
 }
 
@@ -65,22 +65,18 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
       }
     }
     case ACTIONS.Types.UPDATE_SEQUENCE: {
-      const instrumentID = action.payload.instrumentID //
-      const sequenceID = action.payload.sequenceID //
-      const sequence = action.payload.sequence
-
-      // $Ignore
-      const instruments = state.instruments.slice() // Always slice the state!
-
-      const instrumentToUpdate = instruments.find(instrument => instrument.id === instrumentID)
-
-      if (instrumentToUpdate) {
-        instruments[instruments.indexOf(instrumentToUpdate)].sequences[sequenceID] = sequence
-      }
+      const { instrumentID, sequenceID, sequence } = action.payload
 
       return {
         ...state,
-        instruments,
+        // $Ignore
+        instruments: state.instruments.map((entry, index) => {
+          if (entry.id === instrumentID) {
+            entry.sequences.splice(sequenceID, 0, sequence)
+          }
+
+          return entry;
+        }),
       }
     }
     // EDITOR
@@ -88,6 +84,7 @@ const instrumentReducer = (state: typeof defaultState = defaultState, action: { 
       const targetSequence = action.payload
       const instruments = state.instruments.slice()
 
+      // TODO: Transform into a map
       let copied = []
 
       instruments.forEach((instrument, index) => {

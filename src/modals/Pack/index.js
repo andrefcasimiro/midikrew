@@ -33,10 +33,10 @@ const Pack = ({ close, credits, pack, handleInstrumentExtraction }) => (
       <hr />
       <br />
       {pack.map((instrument, index) =>
-        <StyledLi key={instrument.id} onClick={() => handleInstrumentExtraction(instrument.name)}>
+        <StyledLi key={instrument.id}>
           <PaddedColumn>
             <Field>{instrument.name}</Field>
-            <PaddedIconButton>Add Instrument</PaddedIconButton>
+            <PaddedIconButton onClick={() => handleInstrumentExtraction(instrument.id)}>Add Instrument</PaddedIconButton>
           </PaddedColumn>
           <audio controls>
             <source src={instrument.samplePath} type={`audio/${getFormat(instrument.samplePath)}`}/>
@@ -50,8 +50,8 @@ const Pack = ({ close, credits, pack, handleInstrumentExtraction }) => (
 
 const enhancer: HOC<*, Props> = compose(
   withHandlers({
-    handleInstrumentExtraction: props => name => {
-      const instrument = extractInstrumentFromPack(name, props.pack)
+    handleInstrumentExtraction: props => id => {
+      const instrument = extractInstrumentFromPack(id, props.pack)
 
       if (!instrument) {
         return

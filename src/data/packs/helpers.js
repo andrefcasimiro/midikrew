@@ -4,8 +4,8 @@ import INSTRUMENT_ACTIONS from 'data/instrument/actions'
 import type { Instrument } from 'data/instrument/types'
 import { loadSample } from 'data/audio/helpers'
 
-export const extractInstrumentFromPack = (name: string, pack: Instrument[]): ?Instrument =>
-  pack.find(instrument => instrument.name === name)
+export const extractInstrumentFromPack = (id: string, pack: Instrument[]): ?Instrument =>
+  pack.find(instrument => instrument.id === id)
 
 export const loader = (instrument: Instrument | Instrument[]) => {
   const audioContext = reduxStore.getState().track.audioContext
@@ -21,6 +21,7 @@ export const loader = (instrument: Instrument | Instrument[]) => {
 
 export const loadAsync = (instrument: Instrument, audioContext: AudioContext) => {
   loadSample(instrument.samplePath, audioContext, 1, 1, result => {
+
     const _instrument = {
       ...instrument,
       sampleSource: result,
