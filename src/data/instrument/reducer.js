@@ -25,11 +25,6 @@ const defaultState: State = {
 const instrumentReducer = (state: typeof defaultState = defaultState, action: { type: string, payload: any }) => {
   switch (action.type) {
     case ACTIONS.Types.ADD_INSTRUMENT:
-
-      if (state.instruments.find(entry => entry.name === action.payload.name)) {
-        return state;
-      }
-
       const instrumentToAdd = {
         ...action.payload,
         id: Date.now(),
